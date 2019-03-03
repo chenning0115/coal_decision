@@ -1,0 +1,126 @@
+import os, sys, time
+from datetime import datetime, timedelta
+sys.path.append(os.path.join(os.path.dirname(__file__) ,'.'))
+sys.path.append(os.path.join(os.path.dirname(__file__) ,'..'))
+
+from monitor import monitor_api
+from monitor import monitor_define
+from pyknow import *
+from xfacts import *
+from xkernal_status import KERNAL_OBJ
+from gas_analysis import GasMonitorStatus, gas_analysis_obj
+
+class test_engine(KnowledgeEngine):
+
+    def __init__(self):
+        super().__init__()
+        self.monitor_fact_dict = {}
+        self.cur_status_fact = None
+
+    
+    def init_data(self, _init_timestamp):
+        # 初始化传感器事实
+        self.__declare_monitor_fact(_init_timestamp)
+        # 设定初始状态为正常
+        self.__declare_modify_status_fact(status_id='normal')
+    
+    def __declare_modify_status_fact(self, status_id='normal'):
+        assert status_id in XSTATUS_DEFINE
+        temp_status = XSTATUS_DEFINE[status_id]
+        if self.cur_status_fact is None:
+            # declare 
+            temp_fact = XStatusFact(sid=temp_status['sid'], descrip=temp_status['descrip'])
+            self.cur_status_fact = self.declare(temp_fact)
+            print('declare status to %s' % temp_status)
+        else:
+            # modify
+            self.cur_status_fact = self.modify(self.cur_status_fact, sid=temp_status['sid'], descrip=temp_status['descrip'])
+            print('modify status to %s' % temp_status)
+
+        return self.cur_status_fact
+
+    def __declare_monitor_fact(self, _init_timestamp):
+        """
+            declare fact for each monitor Fact
+        """
+        for mid in monitor_api.get_monitor_ids():
+            temp_fact = XMonitorFact(mid=mid, val=0.0, val_pred=[],timestamp=_init_timestamp)
+            self.monitor_fact_dict[mid] = self.declare(temp_fact)
+        print('declare monitor fact done..')
+
+    def update_monitor_value_fact(self, data_dict, _timestamp):
+        for k,(v,pred_v) in data_dict.items():
+            if k in self.monitor_fact_dict:
+                temp_fact = self.monitor_fact_dict[k]
+                self.monitor_fact_dict[k] = self.modify(temp_fact, val=float(v), val_pred=pred_v, timestamp=_timestamp)
+
+    # 瓦斯超限
+    @Rule(
+        AS.monitor_fact << XMonitorFact(
+            mid=MATCH.monitor_id, 
+            val=MATCH.monitor_val,
+            val_pred=MATCH.monitor_val_pred,
+            timestamp = MATCH.timestamp
+            ),
+        TEST(
+            lambda monitor_id, monitor_val,monitor_val_pred: \
+                monitor_id in monitor_define.get_monitor_ids_by_type() \
+                and monitor_val >= 0.1 
+        )
+    )
+    def rule_gas_over(self, monitor_fact, monitor_id, monitor_val,monitor_val_pred, timestamp):
+        gas_status_obj = GasMonitorStatus(monitor_id)
+        gas_status_obj.timestamp = timestamp
+        gas_status_obj.status_type = 'over_limit'
+        gas_status_obj.monitor = monitor_define.get_monitor_by_id(monitor_id)
+        gas_status_obj.activate_facts = [monitor_fact]
+        gas_analysis_obj.update_gas_status(monitor_id, gas_status_obj)
+
+
+    # 瓦斯预警
+    @Rule(
+        AS.monitor_fact << XMonitorFact(
+            mid=MATCH.monitor_id, 
+            val=MATCH.monitor_val,
+            val_pred=MATCH.monitor_val_pred,
+            timestamp = MATCH.timestamp
+            ),
+        TEST(
+            lambda monitor_id, monitor_val,monitor_val_pred: \
+                monitor_id in monitor_define.get_monitor_ids_by_type() \
+                and monitor_val < 0.1
+                and len(monitor_val_pred) > 0 
+                and max(monitor_val_pred) >= 0.1
+        )
+    )
+    def rule_gas_pred(self, monitor_fact, monitor_id, monitor_val,monitor_val_pred,timestamp):
+        gas_status_obj = GasMonitorStatus(monitor_id)
+        gas_status_obj.timestamp = timestamp
+        gas_status_obj.status_type = 'pred_over_limit'
+        gas_status_obj.monitor = monitor_define.get_monitor_by_id(monitor_id)
+        gas_status_obj.activate_facts = [monitor_fact]
+        gas_analysis_obj.update_gas_status(monitor_id, gas_status_obj)
+
+
+
+
+if __name__ == "__main__":
+    # print(xstatus_gas_over['sid'], xstatus_gas_over['description'])
+    te = test_engine()
+    te.reset()
+    init_timestamp = datetime.strptime('2017-09-18 00:00:00', '%Y-%m-%d %H:%M:%S')
+    time_delta = timedelta(minutes=2)
+    te.init_data(init_timestamp)
+    cur_time = init_timestamp
+    for i in range(20):
+        data = monitor_api.fmd.get_cur_data(index=i)
+        print('index=',i, 'time=', cur_time)
+        cur_time = cur_time + time_delta
+        te.update_monitor_value_fact(data,_timestamp=cur_time)
+
+        # print(te.monitor_fact_dict)
+        te.run()
+        gas_analysis_obj.analysis()
+
+    
+    

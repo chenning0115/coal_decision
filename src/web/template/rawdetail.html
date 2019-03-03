@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <link rel="icon" href="../../favicon.ico">
+
+  <title>LRSearch</title>
+
+  <link href="static/css/bootstrap.min.css" rel="stylesheet">
+  <script src="static/js/jquery-3.2.1.min.js"></script>
+  <script src="static/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+  <!-- Fixed navbar -->
+  <nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false"
+          aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">Bootstrap theme</a>
+      </div>
+      <div id="navbar" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
+          <li class="active">
+            <a href="#">Home</a>
+          </li>
+          <li>
+            <a href="#about">About</a>
+          </li>
+          <li>
+            <a href="#contact">Contact</a>
+          </li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown
+              <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+              <li>
+                <a href="#">Action</a>
+              </li>
+              <li>
+                <a href="#">Another action</a>
+              </li>
+              <li>
+                <a href="#">Something else here</a>
+              </li>
+              <li role="separator" class="divider"></li>
+              <li class="dropdown-header">Nav header</li>
+              <li>
+                <a href="#">Separated link</a>
+              </li>
+              <li>
+                <a href="#">One more separated link</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <!--/.nav-collapse -->
+    </div>
+  </nav>
+
+  <div class="container" role="main">
+
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class="jumbotron">
+      <h1>LRGIS地图</h1>
+      <p>This is a template showcasing the optional theme stylesheet included in Bootstrap. Use it as a starting point to create
+        something more unique by building on or modifying it.This is a template showcasing the optional theme stylesheet included in Bootstrap. Use it as a starting point to create something
+        more unique by building on or modifying it.This is a template showcasing the optional theme stylesheet included in Bootstrap. Use it as a starting point to create something
+        more unique by building on or modifying it.This is a template showcasing the optional theme stylesheet included in Bootstrap. Use it as a starting point to create something
+        more unique by building on or modifying it.This is a template showcasing the optional theme stylesheet included in Bootstrap. Use it as a starting point to create something
+        more unique by building on or modifying it.</p>
+    </div>
+
+
+    <div class="row">
+      <div class="col-md-6">
+          <div>
+            <h3>当前状况: 瓦斯超限</h3>
+            <div class="bs-example" data-example-id="contextual-table">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>传感器编号</th>
+                    <th>位置描述</th>
+                    <th>数值</th>
+                    <th>状况</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="danger">
+                    <th scope="row">1</th>
+                    <td>044A02</td>
+                    <td>上隅角瓦斯浓度</td>
+                    <td>1.2%</td>
+                    <td>超限</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">2</th>
+                    <td>044A11</td>
+                    <td>风速</td>
+                    <td>1.2%</td>
+                    <td>过低</td>
+                  </tr>
+                  <tr class="success">
+                    <th scope="row">3</th>
+                    <td>Column content</td>
+                    <td>Column content</td>
+                    <td>Column content</td>
+                  </tr>
+                  
+                </tbody>
+              </table>
+            </div>
+            <!-- /example -->
+            
+          </div>
+          
+          
+      </div>
+      <div class="col-md-6">
+        <div>
+          <h3>决策建议: </h3>
+            <div class="alert alert-danger" role="alert">
+            1. 切断上隅角处电源
+            <button class="btn btn-primary" type="button">
+              执行电源切断指令
+              <span class="badge">4</span>
+            </button>
+            </div>
+          <div class="alert alert-info" role="alert">...</div>
+          <div class="alert alert-warning" role="alert">...</div>
+          <div class="alert alert-danger" role="alert">...</div>
+        </div>
+        
+    </div>
+
+
+        <div class="row">
+          <div class="col-md-6">
+            <div>
+              <h3>相似案例:</h3>
+              
+              <div class="alert alert-info" role="alert">...</div>
+              <div class="alert alert-warning" role="alert">...</div>
+              <div class="alert alert-danger" role="alert">...</div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div>
+              <h3>案例分析: </h3>
+              <div class="alert alert-success" role="alert">...</div>
+              <div class="alert alert-info" role="alert">...</div>
+              <div class="alert alert-warning" role="alert">...</div>
+              <div class="alert alert-danger" role="alert">...</div>
+            </div>
+          </div>
+        </div>
+
+  </div>
+  
+
+  <div class="container" role="main">
+    <footer class="blog-footer">
+      <p>北京大学智慧能源与工程中心
+        <a href="http://www.pku.edu.cn">北京大学</a> by
+        <a href="https://www.github.com/chenning0115">@charnix</a>.</p>
+      <p>
+        <a href="#">Back to top</a>
+      </p>
+    </footer>
+  </div>
+</body>
+
+</html>
