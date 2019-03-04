@@ -6,7 +6,6 @@ from monitor import monitor_api
 from monitor import monitor_define
 from pyknow import *
 from xfacts import *
-from xkernal_status import KERNAL_OBJ
 from global_status import GLOBAL_STATUS
 
 
@@ -22,6 +21,10 @@ class GasMonitorStatus(object):
         self.monitor = None
         self.activate_facts = None
         self.activate_rule = None #触发了哪条规则
+
+        self.pred_over_limit_index = 0
+
+
 
 class GasAnalysisEventType(object):
     NORMAL = "瓦斯浓度状态正常"
@@ -91,6 +94,24 @@ class GasAnalysisEvent(object):
 class Suggestion(object):
     def __init__(self):
         pass
+    def execute(self):
+        pass
+    def get_description(self):
+        pass
+    def get_status(self): #NOT_EXECUTE, EXECUTING, EXECUTED
+        pass
+
+class SimpleSuggestion(Suggestion):
+    def __init__(self):
+        self.description = ""
+        self.execute_fun = None
+        self.status = False
+    def execute(self):
+        return self.execute_fun()
+    def get_description(self):
+        return self.description
+    def get_status(self):
+        return self.status
 
 
 class GasAnalysis(object):
@@ -98,6 +119,11 @@ class GasAnalysis(object):
     monitorstatus => event + suggenstions 
     and decide whether push to kernal_obj or not 
     """
+    def __new__(cls):
+        if not hasattr(cls, 'instance'):
+            cls.instance = super(GasAnalysis, cls).__new__(cls)
+        return cls.instance
+
     def __init__(self):
         
         self.gas_monitor_ids = list(monitor_define.get_monitor_ids_by_type())
@@ -108,6 +134,8 @@ class GasAnalysis(object):
         
         self.result_event = None
         self.suggestions = []
+        self.update = False
+
 
     def update_gas_status(self, gasid, status_obj):
         assert gasid in self.gas_monitor_ids
@@ -117,7 +145,7 @@ class GasAnalysis(object):
             self.reserve_status[gasid] = status_obj
             self.reserve_status_update = True
 
-
+    
     def analysis(self):
         """
         """
@@ -125,10 +153,12 @@ class GasAnalysis(object):
             print('[GasAnalysis]: no current gas status..')
             return 
         self.result_event = GasAnalysisEvent(self.current_status)
-        print(self.result_event.get_title(), self.result_event.get_detail())
+        self.update = True
+        print('后台结果: ', self.result_event.get_title())
+
         
        
-gas_analysis_obj = GasAnalysis()
+
 
         
 

@@ -3,8 +3,8 @@
 
 <head>
   <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge"> -->
+  <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
   <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
   <meta name="description" content="">
   <meta name="author" content="">
@@ -15,6 +15,7 @@
   <link href="static/css/bootstrap.min.css" rel="stylesheet">
   <script src="static/js/jquery-3.2.1.min.js"></script>
   <script src="static/js/bootstrap.min.js"></script>
+  <script src="static/js/echarts.min.js"></script>
 </head>
 <body>
 
@@ -85,91 +86,52 @@
         more unique by building on or modifying it.</p>
     </div>
 
-
     <div class="row">
-      <div class="col-md-6">
-          <div>
-            <h3>当前状况: 瓦斯超限</h3>
-            <div class="bs-example" data-example-id="contextual-table">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>传感器编号</th>
-                    <th>位置描述</th>
-                    <th>数值</th>
-                    <th>状况</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr class="danger">
-                    <th scope="row">1</th>
-                    <td>044A02</td>
-                    <td>上隅角瓦斯浓度</td>
-                    <td>1.2%</td>
-                    <td>超限</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">2</th>
-                    <td>044A11</td>
-                    <td>风速</td>
-                    <td>1.2%</td>
-                    <td>过低</td>
-                  </tr>
-                  <tr class="success">
-                    <th scope="row">3</th>
-                    <td>Column content</td>
-                    <td>Column content</td>
-                    <td>Column content</td>
-                  </tr>
-                  
-                </tbody>
-              </table>
-            </div>
-            <!-- /example -->
-            
-          </div>
-          
-          
-      </div>
-      <div class="col-md-6">
-        <div>
-          <h3>决策建议: </h3>
-            <div class="alert alert-danger" role="alert">
-            1. 切断上隅角处电源
-            <button class="btn btn-primary" type="button">
-              执行电源切断指令
-              <span class="badge">4</span>
-            </button>
-            </div>
-          <div class="alert alert-info" role="alert">...</div>
-          <div class="alert alert-warning" role="alert">...</div>
-          <div class="alert alert-danger" role="alert">...</div>
-        </div>
-        
+      <div id="main" style="width: 1200px;height:400px;"></div>
     </div>
 
-
-        <div class="row">
-          <div class="col-md-6">
-            <div>
-              <h3>相似案例:</h3>
-              
-              <div class="alert alert-info" role="alert">...</div>
-              <div class="alert alert-warning" role="alert">...</div>
-              <div class="alert alert-danger" role="alert">...</div>
+    <!-- 异常与异常分析部分 -->
+    <div class="row">
+      <div class="col-md-6">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">当前监测异常状况:</h3>
+            </div>
+            <div class="panel-body">
+              <div id="gas_event"></div>
             </div>
           </div>
-          <div class="col-md-6">
-            <div>
-              <h3>案例分析: </h3>
-              <div class="alert alert-success" role="alert">...</div>
-              <div class="alert alert-info" role="alert">...</div>
-              <div class="alert alert-warning" role="alert">...</div>
-              <div class="alert alert-danger" role="alert">...</div>
-            </div>
+      </div>
+
+      <div class="col-md-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">依据异常状况综合分析结果:</h3>
+        </div>
+        <div class="panel-body">
+          <div id="gas_summery_event">
+            <div id="gas_summery_title"></div>
+            <div id="gas_summery_content"></div>
           </div>
         </div>
+      </div> 
+      </div>
+    </div>
+
+    <!-- 开始建议部分 -->
+    <div class="row">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">当前决策建议:</h3>
+        </div>
+        <div class="panel-body">
+          <div id="gas_suggestion">
+            
+          </div>
+        </div>
+      </div>
+
+    </div>
 
   </div>
   
@@ -184,6 +146,106 @@
       </p>
     </footer>
   </div>
+
+
+  <script type="text/javascript">
+  // echarts
+  function draw_gas_line_chart(data) {
+    data = eval("(" + data + ")")
+    var myChart = echarts.init(document.getElementById('main'));
+    myChart.setOption(option = {
+      title: {
+        text: '实时瓦斯监测与预测',
+        subtext: '当前工作面 - W15117',
+        x: 'center',
+        align: 'right'
+      },
+      tooltip: {
+        trigger: 'axis'
+      },
+      legend: {
+        data: data['mids'],
+         x: 'left',
+      },
+      xAxis: {
+        data: data['dates']
+      },
+      yAxis: {
+        splitLine: {
+          show: false
+        }
+      },
+      toolbox: {
+      },
+      visualMap: {
+        top: 10,
+        right: 10,
+        pieces: [{
+          gt: 0,
+          lte: 0.1,
+          color: '#096'
+        }, {
+          gt: 0.1,
+          lte: 3.0,
+          color: '#ffde33'
+        }],
+        outOfRange: {
+          color: '#999'
+        }
+      },
+      series: [{
+        name: '044A02',
+        type: 'line',
+        data: data['044A02'],
+        markLine: {
+          silent: true,
+          data: [{
+            yAxis: 0.1
+          }, {
+            xAxis: data['cur_date']
+          },]
+        }
+      },
+      {
+          name: '044A03',
+          type: 'line',
+          data: data['044A03'],
+      },
+      {
+          name: '009A13',
+          type: 'line',
+          data: data['009A13'],
+      },
+      {
+          name: '044A11',
+          type: 'line',
+          data: data['044A11'],
+      },
+        ]
+    });
+  }
+  function draw_gas_line_chart_timeinter() {
+    $.get('/get_gas_monitor_data', draw_gas_line_chart)
+  }
+  setInterval("draw_gas_line_chart_timeinter()", "1000");
+  </script>
+
+
+  <script type="text/javascript">
+    function generate_gas_event(data) {
+      data = eval("(" + data + ")")
+      if(data['update']==true){
+          // alert(data)
+          document.getElementById("gas_event").innerHTML = data['content'];
+          document.getElementById("gas_summery_title").innerHTML = data['summery_title'];
+          document.getElementById("gas_summery_content").innerHTML = data['summery_content'];
+      }
+    }
+    function generate_gas_event_timeinter() {
+      $.get('/get_gas_analysis_event', generate_gas_event)
+    }
+    setInterval("generate_gas_event_timeinter()", "1000");
+  </script>
 </body>
 
 </html>

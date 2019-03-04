@@ -60,6 +60,12 @@ class FileMonitorData(MonitorData):
             res.append(i % _size)
         return res
 
+    def get_last_index(self, cur_index, last_window=10):
+        res = []
+        for i in range(last_window,0,-1):
+            res.append(cur_index - i)
+        return res
+
     def get_cur_data(self, index=None, cur_time=None, next_window=5):
         """
         优先使用index, 如果没有提供index则使用cur_time
@@ -80,6 +86,14 @@ class FileMonitorData(MonitorData):
             res[sid] = (data[sid],list(next_data[sid]))
         return res
 
+    def get_monitor_data_by_id_and_time(self, monitor_id, cur_index, last_window, next_window):
+        cur_index = cur_index % self.data.index.size
+        all_index = self.get_last_index(cur_index, last_window) + [cur_index] + self.get_next_index(cur_index,next_window)
+        # print('all_index', all_index)
+        data = self.data.iloc[all_index, :]
+        return list(data[monitor_id])
+
+
     # 注意，该函数没有返回预测值
     # def get_cur_data_specific(self, cur_time=datetime.now(), last_window=5, method='mean'):
     #     index = self.datetime2index(cur_time)
@@ -93,21 +107,3 @@ class FileMonitorData(MonitorData):
     #         res[sid] = data[sid]
     #     return res
 
-
-import os, sys
-path = os.path.join(os.path.dirname(__file__) ,'../../data/gas_censor.csv')
-print('load monitor data from %s ..' % path)
-fmd = FileMonitorData(path)
-
-def unit_test():
-    print(fmd.get_cur_data())
-    # print(fmd.get_cur_data_specific())
-
-
-        
-        
-        
-if __name__ == "__main__":
-    unit_test()
-
-        
