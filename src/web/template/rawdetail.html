@@ -259,8 +259,11 @@
 
     setInterval("generate_gas_event_timeinter()", "1000");
 
-    function show() {
-      alert($("#suggest_click").attr("sug_id"))
+    function suggest_func() {
+      base_url = '/suggest_event?sug_id='
+      sug_id = $("#suggest_click").attr("sug_id")
+      url = base_url + sug_id
+      $.get(url)
       // alert('hahahah')
     }
   </script>

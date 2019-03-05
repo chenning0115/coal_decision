@@ -53,7 +53,13 @@ class GetGasAnalysisSuggestionHandler(tornado.web.RequestHandler):
         # print('get_event=',res)
         self.write(json.dumps(res))
       
-            
+class SuggestEvent(tornado.web.RequestHandler):
+    def get(self):
+        sug_id = self.get_argument('sug_id', None)
+        gas_analysis_obj = get_gas_analysis_obj()
+        sug_obj = gas_analysis_obj.suggestion_analysis_obj.get_suggestion_info(sug_id)
+        print(sug_obj.title, sug_obj.description)
+        # gas_analysis_obj.set_global_status('global_status_period','on_urgent')
 
 
 
@@ -68,6 +74,7 @@ application = tornado.web.Application([
         (r"/get_gas_monitor_data",GetGasMonitorDataHandler),
         (r"/get_gas_analysis_event",GetGasAnalysisEventHandler),
         (r"/get_gas_suggestion", GetGasAnalysisSuggestionHandler),
+        (r"/suggest_event",SuggestEvent),
     ],**settings)
 
 

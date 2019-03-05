@@ -21,7 +21,7 @@ fmd = monitor_api.FileMonitorData(path_data, init_time=cur_time)
 # global status
 class GlobalStatus(object):
     def __init__(self):
-        self.global_status_period = 'normal' # normal or no_urgent
+        self.global_status_period = 'normal' # normal or on_urgent
 
 global_status = GlobalStatus()
 
@@ -31,7 +31,9 @@ gas_analysis_obj = GasAnalysis(global_status)
 
 def get_cur_time():
     return (not cur_index==last_time_index), cur_index, cur_time
-    
+
+
+
 def index2time(index_list):
     global cur_index, cur_time, time_delta
     res = []

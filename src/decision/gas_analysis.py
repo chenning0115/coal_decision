@@ -129,7 +129,7 @@ class GasSuggenstionAnalysis(object):
         event_type = self.gas_event.event_type
         if self.global_status.global_status_period == 'normal':
             if event_type == GasAnalysisEventType.NORMAL:
-                my_sug_id_0 = self.global_status.global_status_period + '_gas_' + GasAnalysisEventType.NORMAL + '_0'
+                my_sug_id_0 = 'gas_suggestion_everything_is_ok_0'
                 simple_sug_obj = SimpleSuggestion()
                 simple_sug_obj.suggestion_id = my_sug_id_0
                 simple_sug_obj.suggenstion_type = SuggenstionType.SUGGESTION_NORMAL
@@ -139,8 +139,7 @@ class GasSuggenstionAnalysis(object):
                 self.id2suggestion[my_sug_id_0] = simple_sug_obj
 
             elif event_type in [GasAnalysisEventType.PRED_LEVEL_1 , GasAnalysisEventType.PRED_LEVEL_2]:
-                my_sug_id_0 = self.global_status.global_status_period + '_gas_' + GasAnalysisEventType.PRED_LEVEL_1\
-                    +GasAnalysisEventType.PRED_LEVEL_2 + '_0'
+                my_sug_id_0 = "gas_suggestion_be_careful_about_the_gas_pred_over_limit_0"
                 simple_sug_obj = SimpleSuggestion()
                 simple_sug_obj.suggestion_id = my_sug_id_0
                 simple_sug_obj.suggenstion_type = SuggenstionType.SUGGESTION_SIMPLE_ACTION
@@ -151,8 +150,7 @@ class GasSuggenstionAnalysis(object):
                 self.id2suggestion[my_sug_id_0] = simple_sug_obj
 
             elif event_type in [GasAnalysisEventType.OVER_LEVEL_1 ,GasAnalysisEventType.OVER_LEVEL_2]:
-                my_sug_id_0 = self.global_status.global_status_period + '_gas_' + GasAnalysisEventType.OVER_LEVEL_1 + "_" \
-                        + GasAnalysisEventType.OVER_LEVEL_2 + "_0"
+                my_sug_id_0 = "gas_suggestion_gas_over_limit_0"
                 simple_sug_obj = SimpleSuggestion()
                 simple_sug_obj.suggestion_id = my_sug_id_0
                 simple_sug_obj.suggenstion_type = SuggenstionType.SUGGESTION_SIMPLE_ACTION
@@ -178,7 +176,8 @@ class GasSuggenstionAnalysis(object):
         if sug_id not in self.id2suggestion:
             print('can not find suggestion of %s' % sug_id)
             return None
-        return self.id2suggestion[sug_id]
+        sug_obj = self.id2suggestion[sug_id]
+        return sug_obj
         
 
 class GasAnalysis(object):
@@ -205,6 +204,9 @@ class GasAnalysis(object):
         self.suggestion_analysis_obj = None
         self.update = False
 
+    def set_global_status(self, name, value):
+        setattr(self.global_status, name, value)
+        self.analysis()
 
     def update_gas_status(self, gasid, status_obj):
         assert gasid in self.gas_monitor_ids

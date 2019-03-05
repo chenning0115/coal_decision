@@ -77,7 +77,7 @@ def aggregate_suggestion(gas_analysis_obj):
                         <div class='col-md-2'><h4> %s </h4></div> \
                         <div class='col-md-8'> <h4> %s <h4> </div> \
                         <div class='col-md-2'> \
-                             <button id='suggest_click' onclick='show()' sug_id='%s' class='btn btn-%s' type='button'>%s</button> </div> \
+                             <button id='suggest_click' onclick='suggest_func()' sug_id='%s' class='btn btn-%s' type='button'>%s</button> </div> \
                     </div>" % (sug_obj.level, sug_obj.title, sug_obj.description, sug_id ,sug_obj.level, sug_obj.activate_title)
         suggest_items.append(item)
     res['content'] = ' '.join(suggest_items)
