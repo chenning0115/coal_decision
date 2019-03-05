@@ -1,6 +1,6 @@
 import os, sys, time
 sys.path.append(os.path.join(os.path.dirname(__file__) ,'.'))
-from decision.gas_analysis import GasAnalysisEventType
+from decision.gas_analysis import GasAnalysisEventType, SuggenstionType
 from launch import time_delta
 
 def aggregate_event(gas_analysis_obj):
@@ -56,3 +56,33 @@ def aggregate_event(gas_analysis_obj):
     return res
 
 
+def aggregate_suggestion(gas_analysis_obj):
+    res = {}
+    if not gas_analysis_obj.update:
+        res['update'] = False
+        return res
+
+    res['update'] = True
+    id2suggests = gas_analysis_obj.suggestion_analysis_obj.id2suggestion
+    suggest_items = []
+    for sug_id, sug_obj in id2suggests.items():
+        if sug_obj.suggenstion_type == SuggenstionType.SUGGESTION_NORMAL:
+            item = "<div class='row alert alert-%s' role='alert'> \
+                        <div class='col-md-2'><h4> %s </h4></div> \
+                        <div class='col-md-8'><h4>%s </h4></div> \
+                        <div class='col-md-2'> </div> \
+                        </div>" % (sug_obj.level, sug_obj.title, sug_obj.description)
+        else:
+            item = "<div class='row alert alert-%s' role='alert'> \
+                        <div class='col-md-2'><h4> %s </h4></div> \
+                        <div class='col-md-8'> <h4> %s <h4> </div> \
+                        <div class='col-md-2'> \
+                             <button id='suggest_click' onclick='show()' sug_id='%s' class='btn btn-%s' type='button'>%s</button> </div> \
+                    </div>" % (sug_obj.level, sug_obj.title, sug_obj.description, sug_id ,sug_obj.level, sug_obj.activate_title)
+        suggest_items.append(item)
+    res['content'] = ' '.join(suggest_items)
+    return res
+
+
+
+        

@@ -123,6 +123,7 @@
       <div class="panel panel-default">
         <div class="panel-heading">
           <h3 class="panel-title">当前决策建议:</h3>
+          <!-- <button id='suggest_click' class='btn btn-success' type='button'>hahaha</button> -->
         </div>
         <div class="panel-body">
           <div id="gas_suggestion">
@@ -241,10 +242,27 @@
           document.getElementById("gas_summery_content").innerHTML = data['summery_content'];
       }
     }
-    function generate_gas_event_timeinter() {
-      $.get('/get_gas_analysis_event', generate_gas_event)
+   
+
+    function get_gas_suggestion(data) {
+      data = eval("(" + data + ")")
+      if (data['update'] == true) {
+        // alert(data)
+        document.getElementById("gas_suggestion").innerHTML = data['content'];
+      }
     }
+
+     function generate_gas_event_timeinter() {
+        $.get('/get_gas_analysis_event', generate_gas_event)
+        $.get('/get_gas_suggestion', get_gas_suggestion)
+      }
+
     setInterval("generate_gas_event_timeinter()", "1000");
+
+    function show() {
+      alert($("#suggest_click").attr("sug_id"))
+      // alert('hahahah')
+    }
   </script>
 </body>
 

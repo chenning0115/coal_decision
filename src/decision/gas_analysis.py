@@ -6,7 +6,6 @@ from monitor import monitor_api
 from monitor import monitor_define
 from pyknow import *
 from xfacts import *
-from global_status import GLOBAL_STATUS
 
 
 class GasMonitorStatus(object):
@@ -91,49 +90,119 @@ class GasAnalysisEvent(object):
         return content
    
 
+
+
+class SuggenstionType(object):
+    SUGGESTION_ORGANIZE = 'suggestion_organize'
+    SUGGESTION_ELECTONIC = 'suggestion_electronic'
+    SUGGESTION_AIR = 'suggestion_air'
+    SUGGESTION_SIMPLE_ACTION = 'suggestion_simple_action' #例如一些提醒，修改状态量
+    SUGGESTION_NORMAL = "suggestion_normal"
+    
 class Suggestion(object):
     def __init__(self):
         pass
-    def execute(self):
-        pass
-    def get_description(self):
-        pass
-    def get_status(self): #NOT_EXECUTE, EXECUTING, EXECUTED
-        pass
+
 
 class SimpleSuggestion(Suggestion):
     def __init__(self):
+        self.suggestion_id = None 
+        self.suggenstion_type = None #类型 组织，断电，逃生，加大风量等
+        self.args_dict = {}
+        self.level = 'danger' #与boostrap的颜色相对应
+        self.title = ""
         self.description = ""
-        self.execute_fun = None
-        self.status = False
-    def execute(self):
-        return self.execute_fun()
-    def get_description(self):
-        return self.description
-    def get_status(self):
-        return self.status
+        self.activate_title = ""
 
+
+class GasSuggenstionAnalysis(object):
+    def __init__(self, _gas_event, _global_status):
+        self.gas_event = _gas_event
+        self.global_status= _global_status
+        self.id2suggestion = {}
+        self.suggest()
+
+        for sid, sg in self.id2suggestion.items():
+            print(sid, sg.title)
+
+    def suggest(self):
+        event_type = self.gas_event.event_type
+        if self.global_status.global_status_period == 'normal':
+            if event_type == GasAnalysisEventType.NORMAL:
+                my_sug_id_0 = self.global_status.global_status_period + '_gas_' + GasAnalysisEventType.NORMAL + '_0'
+                simple_sug_obj = SimpleSuggestion()
+                simple_sug_obj.suggestion_id = my_sug_id_0
+                simple_sug_obj.suggenstion_type = SuggenstionType.SUGGESTION_NORMAL
+                simple_sug_obj.level = 'success'
+                simple_sug_obj.title = "正常状态"
+                simple_sug_obj.description = "当前无需进行应急处置..."
+                self.id2suggestion[my_sug_id_0] = simple_sug_obj
+
+            elif event_type in [GasAnalysisEventType.PRED_LEVEL_1 , GasAnalysisEventType.PRED_LEVEL_2]:
+                my_sug_id_0 = self.global_status.global_status_period + '_gas_' + GasAnalysisEventType.PRED_LEVEL_1\
+                    +GasAnalysisEventType.PRED_LEVEL_2 + '_0'
+                simple_sug_obj = SimpleSuggestion()
+                simple_sug_obj.suggestion_id = my_sug_id_0
+                simple_sug_obj.suggenstion_type = SuggenstionType.SUGGESTION_SIMPLE_ACTION
+                simple_sug_obj.level = 'warning'
+                simple_sug_obj.title = "加强注意"
+                simple_sug_obj.description = "建议加强对该位置处瓦斯检查..."
+                simple_sug_obj.activate_title = ""
+                self.id2suggestion[my_sug_id_0] = simple_sug_obj
+
+            elif event_type in [GasAnalysisEventType.OVER_LEVEL_1 ,GasAnalysisEventType.OVER_LEVEL_2]:
+                my_sug_id_0 = self.global_status.global_status_period + '_gas_' + GasAnalysisEventType.OVER_LEVEL_1 + "_" \
+                        + GasAnalysisEventType.OVER_LEVEL_2 + "_0"
+                simple_sug_obj = SimpleSuggestion()
+                simple_sug_obj.suggestion_id = my_sug_id_0
+                simple_sug_obj.suggenstion_type = SuggenstionType.SUGGESTION_SIMPLE_ACTION
+                simple_sug_obj.level = 'danger'
+                simple_sug_obj.title = "应急处置"
+                simple_sug_obj.description = "建议立即启动<瓦斯超限>应急处置方案,启动后系统将进入应急状态并进行实时决策支持..."
+                simple_sug_obj.activate_title = "启动应急处置"
+                self.id2suggestion[my_sug_id_0] = simple_sug_obj
+            else:
+                pass
+
+        elif self.global_status.global_status_period == 'on_urgent':
+            if event_type == GasAnalysisEventType.NORMAL:
+                pass
+
+            elif event_type in [GasAnalysisEventType.PRED_LEVEL_1 , GasAnalysisEventType.PRED_LEVEL_2,
+                    GasAnalysisEventType.OVER_LEVEL_1 ,GasAnalysisEventType.OVER_LEVEL_2]:
+                pass
+            else:
+                pass
+    
+    def get_suggestion_info(self, sug_id):
+        if sug_id not in self.id2suggestion:
+            print('can not find suggestion of %s' % sug_id)
+            return None
+        return self.id2suggestion[sug_id]
+        
 
 class GasAnalysis(object):
     """
     monitorstatus => event + suggenstions 
     and decide whether push to kernal_obj or not 
     """
-    def __new__(cls):
+    def __new__(cls, args):
         if not hasattr(cls, 'instance'):
             cls.instance = super(GasAnalysis, cls).__new__(cls)
         return cls.instance
 
-    def __init__(self):
+    def __init__(self, global_status):
         
         self.gas_monitor_ids = list(monitor_define.get_monitor_ids_by_type())
+
+        self.global_status = global_status
 
         self.reserve_status = {} #id -> status_obj
         self.reserve_status_update = False
         self.current_status = {}  # id -> status_obj
         
         self.result_event = None
-        self.suggestions = []
+        self.suggestion_analysis_obj = None
         self.update = False
 
 
@@ -153,6 +222,7 @@ class GasAnalysis(object):
             print('[GasAnalysis]: no current gas status..')
             return 
         self.result_event = GasAnalysisEvent(self.current_status)
+        self.suggestion_analysis_obj = GasSuggenstionAnalysis(self.result_event, self.global_status)
         self.update = True
         print('后台结果: ', self.result_event.get_title())
 

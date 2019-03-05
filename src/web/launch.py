@@ -9,13 +9,24 @@ from decision.xengine import TriggerEngine
 from decision.gas_analysis import GasAnalysis
 import monitor_api
 
+# time system
 cur_index, cur_time = 0, datetime.strptime('2017-09-18 00:00:00', '%Y-%m-%d %H:%M:%S')
 time_delta = timedelta(minutes=2)
 last_time_index = -1
+
+# monitor data
 path_data = os.path.join(os.path.dirname(__file__) ,'../../data/gas_censor.csv')
 fmd = monitor_api.FileMonitorData(path_data, init_time=cur_time)
 
-gas_analysis_obj = GasAnalysis()
+# global status
+class GlobalStatus(object):
+    def __init__(self):
+        self.global_status_period = 'normal' # normal or no_urgent
+
+global_status = GlobalStatus()
+
+# analysis object
+gas_analysis_obj = GasAnalysis(global_status)
 
 
 def get_cur_time():

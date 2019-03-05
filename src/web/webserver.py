@@ -43,10 +43,16 @@ class GetGasMonitorDataHandler(tornado.web.RequestHandler):
 class GetGasAnalysisEventHandler(tornado.web.RequestHandler):
     def get(self):
         res = aggregate_analysis.aggregate_event(get_gas_analysis_obj())
-        print('get_event=',res)
+        # print('get_event=',res)
         self.write(json.dumps(res))
 
-            
+
+class GetGasAnalysisSuggestionHandler(tornado.web.RequestHandler):
+    def get(self):
+        res = aggregate_analysis.aggregate_suggestion(get_gas_analysis_obj())
+        # print('get_event=',res)
+        self.write(json.dumps(res))
+      
             
 
 
@@ -61,6 +67,7 @@ application = tornado.web.Application([
         (r"/home",RawDetailHanlder),
         (r"/get_gas_monitor_data",GetGasMonitorDataHandler),
         (r"/get_gas_analysis_event",GetGasAnalysisEventHandler),
+        (r"/get_gas_suggestion", GetGasAnalysisSuggestionHandler),
     ],**settings)
 
 
