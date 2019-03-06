@@ -10,7 +10,7 @@ from decision.gas_analysis import GasAnalysis
 import monitor_api
 
 # time system
-cur_index, cur_time = 0, datetime.strptime('2017-09-18 00:00:00', '%Y-%m-%d %H:%M:%S')
+cur_index, cur_time = 0, datetime.strptime('2017-10-18 00:00:00', '%Y-%m-%d %H:%M:%S')
 time_delta = timedelta(minutes=2)
 last_time_index = -1
 
@@ -57,7 +57,7 @@ def launch_trigger_engine(gas_analysis_obj):
         cur_time += time_delta
         last_time_index = cur_index
         cur_index += 1
-        time.sleep(1.5)
+        time.sleep(1)
 
 
 def launch():

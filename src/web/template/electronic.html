@@ -86,15 +86,12 @@
         more unique by building on or modifying it.</p>
     </div>
 
-    <div class="row">
-      <div id="main" style="width: 1200px;height:400px;"></div>
-    </div>
 
     <!-- 异常与异常分析部分 -->
     <div class="row">
       <div class="col-md-6">
           <div class="panel panel-default">
-            <div class="panel-heading">
+            <div class="panel-headinzg">
               <h3 class="panel-title">当前监测异常状况:</h3>
             </div>
             <div class="panel-body">
@@ -110,29 +107,15 @@
         </div>
         <div class="panel-body">
           <div id="gas_summery_event">
-              <div id="gas_summery_title"></div>
-              <div id="gas_summery_content"></div>
+            <div id="gas_summery_title"></div>
+            <div id="gas_summery_content"></div>
           </div>
         </div>
       </div> 
       </div>
     </div>
 
-    <!-- 开始建议部分 -->
-    <div class="row">
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3 class="panel-title">当前决策建议:</h3>
-          <!-- <button id='suggest_click' class='btn btn-success' type='button'>hahaha</button> -->
-        </div>
-        <div class="panel-body">
-          <div id="gas_suggestion">
-            
-          </div>
-        </div>
-      </div>
-
-    </div>
+   
 
   </div>
   
@@ -148,88 +131,7 @@
     </footer>
   </div>
 
-
   <script type="text/javascript">
-  // echarts
-  function draw_gas_line_chart(data) {
-    data = eval("(" + data + ")")
-    var myChart = echarts.init(document.getElementById('main'));
-    myChart.setOption(option = {
-      title: {
-        text: '实时瓦斯监测与预测',
-        subtext: '当前工作面 - W15117',
-        x: 'center',
-        align: 'right'
-      },
-      tooltip: {
-        trigger: 'axis'
-      },
-      legend: {
-        data: data['mids'],
-         x: 'left',
-      },
-      xAxis: {
-        data: data['dates']
-      },
-      yAxis: {
-        splitLine: {
-          show: false
-        }
-      },
-      toolbox: {
-      },
-      visualMap: {
-        top: 10,
-        right: 10,
-        pieces: [{
-          gt: 0,
-          lte: 0.1,
-          color: '#096'
-        }, {
-          gt: 0.1,
-          lte: 3.0,
-          color: '#ffde33'
-        }],
-        outOfRange: {
-          color: '#999'
-        }
-      },
-      series: [{
-        name: '044A02',
-        type: 'line',
-        data: data['044A02'],
-        markLine: {
-          silent: true,
-          data: [{
-            yAxis: 0.1
-          }, {
-            xAxis: data['cur_date']
-          },]
-        }
-      },
-      {
-          name: '044A03',
-          type: 'line',
-          data: data['044A03'],
-      },
-      {
-          name: '009A13',
-          type: 'line',
-          data: data['009A13'],
-      },
-      {
-          name: '044A11',
-          type: 'line',
-          data: data['044A11'],
-      },
-        ]
-    });
-  }
-  function draw_gas_line_chart_timeinter() {
-    $.get('/get_gas_monitor_data', draw_gas_line_chart)
-  }
-  // setInterval("draw_gas_line_chart_timeinter()", "1000");
-
     function generate_gas_event(data) {
       data = eval("(" + data + ")")
       if(data['update']==true){
@@ -241,36 +143,13 @@
     }
    
 
-    function get_gas_suggestion(data) {
-      data = eval("(" + data + ")")
-      if (data['update'] == true) {
-        // alert(data)
-        document.getElementById("gas_suggestion").innerHTML = data['content'];
-      }
-    }
-
      function generate_gas_event_timeinter() {
-        
         $.get('/get_gas_analysis_event', generate_gas_event)
-        $.get('/get_gas_monitor_data', draw_gas_line_chart)
-        $.get('/get_gas_suggestion', get_gas_suggestion)
       }
 
-    setInterval("generate_gas_event_timeinter()", "200");
+    setInterval("generate_gas_event_timeinter()", "1000");
 
-    function suggest_func() {
-      base_url = '/suggest_event?sug_id='
-      sug_id = $("#suggest_click").attr("sug_id")
-      url = base_url + sug_id
-      $.get(url, function (data) {
-        data = eval("(" + data + ")")
-        operate = data['operate'];
-        if(operate == 'redirect'){
-          window.location.href = data['url'];
-        }
-      })
-      // alert('hahahah')
-    }
+  
   </script>
 </body>
 

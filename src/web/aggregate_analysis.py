@@ -20,8 +20,8 @@ def aggregate_event(gas_analysis_obj):
         location_name = str(status_obj.monitor['POS']['TEXT'])
         mid = str(status_obj.monitor_id)
         val = str(status_obj.activate_facts[0]['val'])
-        content = "[瓦斯 超限] %s处瓦斯监测点(编号为%s）瓦斯超限，当前浓度为%s" \
-                    % (location_name, mid, val)
+        ss = list(['<strong>%s</strong>' % item for item in ['瓦斯 超限',location_name, mid, val]])
+        content = "[%s] %s处测点(编号%s)瓦斯超限，当前浓度为<mark>%s<mark>" % tuple(ss)
         wrapper = "<div class='alert alert-danger' role='alert'> %s </div>" % content
         # print(wrapper)
         event_items.append(wrapper)
@@ -31,8 +31,10 @@ def aggregate_event(gas_analysis_obj):
         location_name = str(status_obj.monitor['POS']['TEXT'])
         mid = str(status_obj.monitor_id)
         val = str(status_obj.activate_facts[0]['val'])
-        content = "[瓦斯 预警] %s处瓦斯监测点(编号为%s）瓦斯预计在%s分钟后超限，当前浓度为%s" \
-                    % (location_name, mid,status_obj.pred_over_limit_index * time_delta ,val)
+        ss = list(['<strong>%s</strong>' % item for item in ['瓦斯 预警', location_name, mid ,val,status_obj.pred_over_limit_index * time_delta]])
+        # print(ss)
+        content = "[%s] %s处测点(编号%s)预测具有超限倾向，当前浓度为%s，预测超限倒计时<mark>%s<mark>分钟" \
+                    % tuple(ss)
         wrapper = "<div class='alert alert-warning' role='alert'> %s </div>" % content
         # print(wrapper)
         event_items.append(wrapper)
@@ -51,8 +53,13 @@ def aggregate_event(gas_analysis_obj):
 
 
     # summery 相关内容
-    res['summery_title'] = "<h3><span class='label label-%s'>%s</span></h3>" % (color_type, gas_analysis_event.get_title())
-    res['summery_content'] = "<div class='alert alert-%s' role='alert'> <h5> %s</h5> </div>" % (color_type,gas_analysis_event.get_detail())
+    res['summery_title'] = "<h3> <p class='text-%s'>%s</p> </h3>" % (color_type, gas_analysis_event.get_title())
+    temp_content_list = gas_analysis_event.get_detail()
+    temp_content = '<ul>'
+    for item in temp_content_list:
+        temp_content += '<li>%s</li>' % item
+    temp_content += "</ul>"
+    res['summery_content'] = "<h4> <p class='text-%s'>  %s </p> </h4>" % (color_type,temp_content)
     return res
 
 
@@ -66,19 +73,12 @@ def aggregate_suggestion(gas_analysis_obj):
     id2suggests = gas_analysis_obj.suggestion_analysis_obj.id2suggestion
     suggest_items = []
     for sug_id, sug_obj in id2suggests.items():
-        if sug_obj.suggenstion_type == SuggenstionType.SUGGESTION_NORMAL:
-            item = "<div class='row alert alert-%s' role='alert'> \
-                        <div class='col-md-2'><h4> %s </h4></div> \
-                        <div class='col-md-8'><h4>%s </h4></div> \
-                        <div class='col-md-2'> </div> \
-                        </div>" % (sug_obj.level, sug_obj.title, sug_obj.description)
-        else:
-            item = "<div class='row alert alert-%s' role='alert'> \
-                        <div class='col-md-2'><h4> %s </h4></div> \
-                        <div class='col-md-8'> <h4> %s <h4> </div> \
-                        <div class='col-md-2'> \
-                             <button id='suggest_click' onclick='suggest_func()' sug_id='%s' class='btn btn-%s' type='button'>%s</button> </div> \
-                    </div>" % (sug_obj.level, sug_obj.title, sug_obj.description, sug_id ,sug_obj.level, sug_obj.activate_title)
+        item = "<div class='row alert alert-%s' role='alert'> \
+                    <div class='col-md-2'><h4> %s </h4></div> \
+                    <div class='col-md-8'> <h4> %s <h4> </div> \
+                    <div class='col-md-2'> \
+                            <button id='suggest_click' onclick='suggest_func()' sug_id='%s' class='btn btn-%s' type='button'>%s</button> </div> \
+                </div>" % (sug_obj.level, sug_obj.title, sug_obj.description, sug_id ,sug_obj.level, sug_obj.activate_title)
         suggest_items.append(item)
     res['content'] = ' '.join(suggest_items)
     return res
