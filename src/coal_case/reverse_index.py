@@ -47,7 +47,8 @@ class Segmenter(object):
     
     # which method is the best query segmentation method?
     def segment_for_query(self,context):
-        seg_gen = jieba.cut(context)
+        # seg_gen = jieba.cut(context)
+        seg_gen = jieba.cut_for_search(context)
         res = []
         for w in seg_gen:
             if w in self.set_stopwords:

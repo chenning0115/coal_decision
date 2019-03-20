@@ -109,10 +109,21 @@
           <h3 class="panel-title">依据异常状况综合分析结果:<span id='timestamp_1'></span></h3>
         </div>
         <div class="panel-body">
-          <div id="gas_summery_event">
-              <div id="gas_summery_title"></div>
-              <div id="gas_summery_content"></div>
+          <div class="row">
+            <div class="col-md-8">
+                <div id="gas_summery_event">
+                  <div id="gas_summery_title"></div>
+                  <div id="gas_summery_content"></div>
+                </div>
+            </div>
+            <div class="col-md-4">
+              <h3>
+                <button id="case_search" type="button" class="btn btn-danger">进行案例检索</button>
+              </h3>
+            </div>
           </div>
+          
+          
         </div>
       </div> 
       </div>
@@ -273,6 +284,12 @@
       })
       // alert('hahahah')
     }
+
+    $("#case_search").bind("click", function(e) {
+      val = $("#gas_summery_title").text()
+      url = "/case_search?q="+val
+      window.location.href = url;
+    })
   </script>
 </body>
 

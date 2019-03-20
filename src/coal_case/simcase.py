@@ -9,28 +9,28 @@ import pandas as pd
 from mongo import meta_MKJB,meta_KJWSDJ
 
 target_case_fixed = {
-    "QYMC":("阳煤集团寺家庄煤矿",1),
-    "QYXZ":("有限责任公司",1),
-    "MKJB":("3",1),
-    "MKLX":("地下煤矿",1),
-    "WZYZ":("是",1),
-    "SPTG":("是",1),
-    "SJSCNL1":("500",1),
-    "SJSCNL2":("500",1),
-    "CYRYSL":("",1),
-    "KJWSDJ":("3",1),
-    "KJKCFS":("综合开拓",1),
-    "KJTFFS":("混合式通风",1),
-    "DZGZFZCD":("地质构造复杂程度中等",1),
-    "SGSWDZHJ":("本井田基本属水文地质条件简单型",1)
+    "QYMC":("阳煤集团寺家庄煤矿",0),
+    "QYXZ":("有限责任公司",0),
+    "MKJB":("3",0.05),
+    "MKLX":("地下煤矿",0.1),
+    "WZYZ":("是",0),
+    "SPTG":("是",0),
+    "SJSCNL1":("500",0),
+    "SJSCNL2":("500",0),
+    "CYRYSL":("",0),
+    "KJWSDJ":("3",0.3),
+    "KJKCFS":("综合开拓",0.25),
+    "KJTFFS":("混合式通风",0.3),
+    "DZGZFZCD":("地质构造复杂程度中等",0),
+    "SGSWDZHJ":("本井田基本属水文地质条件简单型",0)
 }
 
 #该处需要由调用方主动提供
 target_case_monitor = {
-    "CH4HL":("",1),
-    "CO2HL":("",1),
-    "COHL":("",1),
-    "QTJCHS":("",1)
+    "CH4HL":("",0),
+    "CO2HL":("",0),
+    "COHL":("",0),
+    "QTJCHS":("",0)
 }
 
 
@@ -71,10 +71,10 @@ def SimMKJB(sim_item): #煤矿级别
         src, tar = sim_item.src, sim_item.tar
         src, tar = int(src), int(tar)
         if abs(src-tar)==0:
-            sim_item.raw_grad = 1
+            sim_item.raw_grad = 10
             sim_item.info = "同为%s" % meta_MKJB[tar]
         elif abs(src-tar)==1:
-            sim_item.raw_grad = 0.5
+            sim_item.raw_grad = 5
             sim_item.info = "不同级别煤矿"
         else:
             sim_item.raw_grad = 0
@@ -89,7 +89,7 @@ def SimMKLX(sim_item):
         sim_item.src = sim_item.src_doc['XKJXX']['MKLX']
         src, tar = sim_item.src.strip(), sim_item.tar.strip()
         if src == tar:
-            sim_item.raw_grad = 1
+            sim_item.raw_grad = 10
             sim_item.info = "同为%s" % tar
         else:
             sim_item.raw_grad = 0
@@ -105,10 +105,10 @@ def  SimKJWSDJ(sim_item): #瓦斯等级
         src, tar = sim_item.src, sim_item.tar
         src, tar = int(src), int(tar)
         if abs(src-tar)==0:
-            sim_item.raw_grad = 1
+            sim_item.raw_grad = 10
             sim_item.info = "同为%s" % meta_KJWSDJ[tar]
         elif abs(src-tar)==1:
-            sim_item.raw_grad = 0.5
+            sim_item.raw_grad = 5
             sim_item.info = "相似瓦斯等级"
         else:
             sim_item.raw_grad = 0
@@ -123,7 +123,7 @@ def SimKJKCFS(sim_item):
         sim_item.src = sim_item.src_doc['XKJXX']['KJKCFS']
         src, tar = sim_item.src.strip(), sim_item.tar.strip()
         if src == tar:
-            sim_item.raw_grad = 1
+            sim_item.raw_grad = 10
             sim_item.info = "同为%s" % tar
         else:
             sim_item.raw_grad = 0
@@ -138,7 +138,7 @@ def SimKJTFFS(sim_item):
         sim_item.src = sim_item.src_doc['XKJXX']['KJTFFS']
         src, tar = sim_item.src.strip(), sim_item.tar.strip()
         if src == tar:
-            sim_item.raw_grad = 1
+            sim_item.raw_grad = 10
             sim_item.info = "同为%s" % tar
         else:
             sim_item.raw_grad = 0

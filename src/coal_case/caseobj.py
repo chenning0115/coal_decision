@@ -16,6 +16,7 @@ class CaseObj(object):
         self.res = find_one(_id)
 
         self.query = None
+        self.query_list = None
         self.match_grad = None
 
         self.target_case_fixed = None
@@ -23,8 +24,8 @@ class CaseObj(object):
 
         self.grad = 0
 
-        self.mathch_ratio = 0.3
-        self.sim_ratio = 0.7
+        self.mathch_ratio = 0.7
+        self.sim_ratio = 0.3
 
         self.url_prefix = "find_one"
 
@@ -39,7 +40,7 @@ class CaseObj(object):
         match_grad = self.match_grad if self.match_grad else 0
         sim_grad = self.sim_result.grad if self.sim_result else 0
         text = "搜索指数:%s,匹配指数%s,综合指数:%s" % tuple(["<hltext>%.2f</hltext>" %  s for s in [match_grad,sim_grad,self.grad]])
-        print(text)
+        # print(text)
         return text
 
     def get_labels(self):
@@ -64,17 +65,23 @@ class CaseObj(object):
         return title
 
     def get_content_search(self):
+        res = []
+        for query in self.query_list:
+            res.append(self.get_content_search_one(query))
+        return ".........".join(res)
+
+    def get_content_search_one(self, cur_query):
         string = self.res['CONTENT']
-        if len(self.query)>0:
-            cur = string.find(self.query[0])
+        if len(cur_query)>0:
+            cur = string.find(cur_query)
         else:
             cur = 0
-        i = max(0, cur - 40)
-        j = cur + 90
+        i = max(0, cur - 20)
+        j = cur + 40
         origin = string[i:j]
         returnString = ''
         for char in origin:
-            if char in self.query:
+            if char in cur_query:
                 char = '<hltext>' + char + '</hltext>'
             returnString += char
         return returnString

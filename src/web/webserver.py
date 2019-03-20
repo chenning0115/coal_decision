@@ -10,7 +10,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__),'../'))
 import webconf
 from launch import get_cur_time, launch, get_gas_analysis_obj
 from launch import fmd, index2time
-from monitor.monitor_define import get_monitor_ids_by_type
+from monitor.monitor_define import get_monitor_ids_by_type,MONITOR_DEFINE
 from decision.gas_analysis import SuggenstionType
 import aggregate_analysis
 from coal_case.caseobj import find_one_obj
@@ -93,9 +93,45 @@ class FindOneCaseHandler(tornado.web.RequestHandler):
 
 class CaseSearchHandler(tornado.web.RequestHandler):
     def get(self):
+        #获取关键词
         query = self.get_argument('q', "瓦斯突出")
-        obj_list = searcher.search(query)
-        return self.render(webconf.path_template_case_search, objs = obj_list)
+        #获取当前时间和监测数据
+        update, cur_index, cur_time = get_cur_time()
+        data = fmd.get_cur_data(index=cur_index)
+        id2data= {}
+        for mid,item in data.items():
+            id2data[mid] = {
+                'define':MONITOR_DEFINE[mid],
+                'val':item[0]
+            }
+        target_case_monitor = {
+            "CH4HL":[-1,1],
+            "CO2HL":[-1,1],
+            "COHL":[-1,1],
+            "QTJCHS":[-1,1]
+        }
+        monitor_data = []
+        for mid,dd in id2data.items():
+            monitor_data.append([mid,dd['define']['POS']['TEXT'],dd['define']['TYPE'],dd['val']])
+            if dd['define']['TYPE']=="CH4":
+                if target_case_monitor['CH4HL'][0] < dd['val']:
+                    target_case_monitor['CH4HL'][0] = dd['val']
+            elif dd['define']['TYPE']=="CO":
+                if target_case_monitor['COHL'][0] < dd['val']:
+                    target_case_monitor['COHL'][0] = dd['val']
+            elif dd['define']['TYPE']=="CO2":
+                if target_case_monitor['CO2HL'][0] < dd['val']:
+                    target_case_monitor['CO2HL'][0] = dd['val']
+            else:
+                pass
+        
+        obj_list = searcher.search(query, target_case_monitor)
+        return self.render(webconf.path_template_case_search, objs = obj_list,
+                 monitor_data=monitor_data, timestr=str(cur_time), query=str(query))
+
+
+
+
 # settings and URL Mapping
 
 settings = {
