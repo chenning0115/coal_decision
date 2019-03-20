@@ -80,13 +80,15 @@ class GasAnalysisEvent(object):
     def get_detail(self):
         pred_monitor_name = [obj.monitor['NAME'] for obj in self.pred_over_limit_list]
         over_monitor_name = [obj.monitor['NAME'] for obj in self.over_limit_list]
-        content = ""
+        content = []
         if len(over_monitor_name) > 0:
-            content += ("%s处监测到瓦斯浓度超限.") % ','.join(over_monitor_name)
+            content.append(("W15117工作面监测到%s处瓦斯超限，其中包括%s。") % (len(over_monitor_name),','.join(over_monitor_name)))
         if len(pred_monitor_name) > 0:
-            content += ("%s处瓦斯浓度预测有超限倾向.") % ','.join(pred_monitor_name)
-
-        content += "请及时做好各项应急措施."
+            content.append(("W15117工作面监测到%s处瓦斯浓度预测有超限倾向，其中包括%s。") % (len(pred_monitor_name) ,','.join(pred_monitor_name)))
+        if len(content) == 0:
+            content.append("当前无明显异常情况。")
+        else:
+            content.append('请依据参考系统提供的建议及时做好相应处置。')
         return content
    
 
@@ -95,9 +97,9 @@ class GasAnalysisEvent(object):
 class SuggenstionType(object):
     SUGGESTION_ORGANIZE = 'suggestion_organize'
     SUGGESTION_ELECTONIC = 'suggestion_electronic'
+    SUGGESTION_ESCAPE = 'suggestion_escape'
     SUGGESTION_AIR = 'suggestion_air'
     SUGGESTION_SIMPLE_ACTION = 'suggestion_simple_action' #例如一些提醒，修改状态量
-    SUGGESTION_NORMAL = "suggestion_normal"
     
 class Suggestion(object):
     def __init__(self):
@@ -107,12 +109,17 @@ class Suggestion(object):
 class SimpleSuggestion(Suggestion):
     def __init__(self):
         self.suggestion_id = None 
-        self.suggenstion_type = None #类型 组织，断电，逃生，加大风量等
-        self.args_dict = {}
+        self.suggenstion_type = None
         self.level = 'danger' #与boostrap的颜色相对应
         self.title = ""
         self.description = ""
         self.activate_title = ""
+        self.execute_func = None
+
+    def execute(self, gas_analysis_obj, *args, **kwargs):
+        return self.execute_func(self, gas_analysis_obj, *args, **kwargs)
+
+
 
 
 class GasSuggenstionAnalysis(object):
@@ -122,20 +129,17 @@ class GasSuggenstionAnalysis(object):
         self.id2suggestion = {}
         self.suggest()
 
-        for sid, sg in self.id2suggestion.items():
-            print(sid, sg.title)
-
     def suggest(self):
         event_type = self.gas_event.event_type
         if self.global_status.global_status_period == 'normal':
             if event_type == GasAnalysisEventType.NORMAL:
-                my_sug_id_0 = 'gas_suggestion_everything_is_ok_0'
                 simple_sug_obj = SimpleSuggestion()
+                my_sug_id_0 = 'gas_suggestion_everything_is_ok_0'
+                simple_sug_obj.suggenstion_type = SuggenstionType.SUGGESTION_SIMPLE_ACTION
                 simple_sug_obj.suggestion_id = my_sug_id_0
-                simple_sug_obj.suggenstion_type = SuggenstionType.SUGGESTION_NORMAL
                 simple_sug_obj.level = 'success'
                 simple_sug_obj.title = "正常状态"
-                simple_sug_obj.description = "当前无需进行应急处置..."
+                simple_sug_obj.description = "当前无需进行任何应急处置..."
                 self.id2suggestion[my_sug_id_0] = simple_sug_obj
 
             elif event_type in [GasAnalysisEventType.PRED_LEVEL_1 , GasAnalysisEventType.PRED_LEVEL_2]:
@@ -146,29 +150,65 @@ class GasSuggenstionAnalysis(object):
                 simple_sug_obj.level = 'warning'
                 simple_sug_obj.title = "加强注意"
                 simple_sug_obj.description = "建议加强对该位置处瓦斯检查..."
-                simple_sug_obj.activate_title = ""
                 self.id2suggestion[my_sug_id_0] = simple_sug_obj
 
             elif event_type in [GasAnalysisEventType.OVER_LEVEL_1 ,GasAnalysisEventType.OVER_LEVEL_2]:
                 my_sug_id_0 = "gas_suggestion_gas_over_limit_0"
                 simple_sug_obj = SimpleSuggestion()
-                simple_sug_obj.suggestion_id = my_sug_id_0
                 simple_sug_obj.suggenstion_type = SuggenstionType.SUGGESTION_SIMPLE_ACTION
+                simple_sug_obj.suggestion_id = my_sug_id_0
                 simple_sug_obj.level = 'danger'
                 simple_sug_obj.title = "应急处置"
-                simple_sug_obj.description = "建议立即启动<瓦斯超限>应急处置方案,启动后系统将进入应急状态并进行实时决策支持..."
+                simple_sug_obj.description = "建议立即启动瓦斯超限应急处置方案,启动后系统将进入应急状态并进行实时决策支持..."
                 simple_sug_obj.activate_title = "启动应急处置"
+                def execute_func(sug_obj, gas_analysis_obj, *args, **kwargs):
+                    gas_analysis_obj.set_global_status('global_status_period','on_urgent')
+                    print(sug_obj.suggestion_id)
+                simple_sug_obj.execute_func = execute_func
                 self.id2suggestion[my_sug_id_0] = simple_sug_obj
             else:
                 pass
 
         elif self.global_status.global_status_period == 'on_urgent':
             if event_type == GasAnalysisEventType.NORMAL:
-                pass
+                simple_sug_obj = SimpleSuggestion()
+                my_sug_id_0 = 'gas_suggestion_urgent_is_ok_0'
+                simple_sug_obj.suggenstion_type = SuggenstionType.SUGGESTION_SIMPLE_ACTION
+                simple_sug_obj.suggestion_id = my_sug_id_0
+                simple_sug_obj.level = 'info'
+                simple_sug_obj.title = "恢复生产"
+                simple_sug_obj.description = "应急处置完成,监测到指标已经恢复正常,建议关闭应急状态，恢复生产与正常监测监控状态..."
+                simple_sug_obj.activate_title = "恢复正常监测状态"
+                def execute_func(sug_obj, gas_analysis_obj, *args, **kwargs):
+                    gas_analysis_obj.set_global_status('global_status_period','normal')
+                    print(sug_obj.suggestion_id)
+                simple_sug_obj.execute_func = execute_func
+                self.id2suggestion[my_sug_id_0] = simple_sug_obj
+
 
             elif event_type in [GasAnalysisEventType.PRED_LEVEL_1 , GasAnalysisEventType.PRED_LEVEL_2,
-                    GasAnalysisEventType.OVER_LEVEL_1 ,GasAnalysisEventType.OVER_LEVEL_2]:
-                pass
+                        GasAnalysisEventType.OVER_LEVEL_1 ,GasAnalysisEventType.OVER_LEVEL_2]:
+                # 断电
+                my_sug_id_0 = "gas_suggestion_over_limit12_electronic_0"
+                simple_sug_obj = SimpleSuggestion()
+                simple_sug_obj.suggestion_id = my_sug_id_0
+                simple_sug_obj.suggenstion_type = SuggenstionType.SUGGESTION_ELECTONIC
+                simple_sug_obj.level = 'danger'
+                simple_sug_obj.title = "立即断电"
+                simple_sug_obj.description = "建议立即启动电力分析，并进行断电操作..."
+                simple_sug_obj.activate_title = "启动应急断电分析"
+                self.id2suggestion[my_sug_id_0] = simple_sug_obj
+
+                # 人员撤离
+                my_sug_id_1 = "gas_suggestion_over_limit12_escape_1"
+                simple_sug_obj = SimpleSuggestion()
+                simple_sug_obj.suggestion_id = my_sug_id_1
+                simple_sug_obj.suggenstion_type = SuggenstionType.SUGGESTION_ESCAPE
+                simple_sug_obj.level = 'danger'
+                simple_sug_obj.title = "组织撤离"
+                simple_sug_obj.description = "建议立即启动人员逃生系统，并组织人员撤离..."
+                simple_sug_obj.activate_title = "启动人员逃生系统"
+                self.id2suggestion[my_sug_id_1] = simple_sug_obj
             else:
                 pass
     

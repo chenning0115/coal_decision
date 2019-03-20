@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>LRSearch</title>
+
+    <link href="static/css/bootstrap.min.css" rel="stylesheet">
+    <script src="static/js/jquery-3.2.1.min.js"></script>
+    <script src="static/js/bootstrap.min.js"></script>
+    <style>
+        span {
+            color: blue;
+        }
+    
+        strong {
+            color: red;
+        }
+    
+        #recid {
+            width: 300px;
+            height: 25px;
+        }
+    
+        #subid {
+            width: 100px;
+            height: 32px;
+        }
+    
+        .box {
+            width: 800px;
+            height: 120px;
+        }
+    
+        .null_er {
+            width: 100px;
+            height: 120px;
+        }
+    
+        a:link {
+            text-decoration: underline;
+        }
+    
+        .text_main {
+            font-size: 13px
+        }
+    
+        .green_linker {
+            font-size: 10px;
+            color: green;
+        }
+        hltext{color:red;}
+        mydate{color: grey}
+    </style>
+</head>
+
+<body>
+
+    <div class="blog-masthead">
+        <div class="container">
+            <nav class="blog-nav">
+                <a class="blog-nav-item active" href="#">Search</a>
+                <a class="blog-nav-item" href="#">Powered</a>
+                <a class="blog-nav-item" href="#">Contact</a>
+                <!-- <a class="blog-nav-item" href="#">New hires</a>
+          <a class="blog-nav-item" href="#">About</a> -->
+            </nav>
+        </div>
+    </div>
+
+
+
+    <div class="row">
+    
+        <div class="col-sm-1 page-header">
+            <img src="static/images/lrsearch_mini.png" alt="">
+        </div>
+        <div class="col-sm-6 page-header">
+            <div class="row">
+                <div class="input-group-lg col-md-10">
+                    <input id="query_phrase" type="text" class="form-control" placeholder="Input word or pharse">
+                </div>
+                <div class="btn-group-lg col-md-2">
+                    <button id="search" type="submit" class="btn btn-primary">Search</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <!-- <div class="blog-header">
+            <h2 class="blog-title">工作面瓦斯超限应急</h2>
+        </div> -->
+        <div class="row">
+            <div class="col-md-7">
+
+                {% for doc in objs %}
+                <!-- <one doc start> -->
+                <div>
+                    <a href="{{ doc.get_url_ori() }}">
+                        <h4 class="blog-post-title " style="color:blue">
+                            <u>{% raw doc.get_title_search() %}</u>
+                        </h4>
+                    </a>
+                    <p>{% raw doc.get_labels() %}</p>
+                    <p>
+                        {% raw doc.get_content_search() %}
+                    </p>
+                    <p style="color:aquamarine">
+                        <a href=" {{ doc.get_url_ori() }}"> {{ doc._id }}</a>
+                        <span>{% raw doc.get_grads() %}</span>
+                    </p>
+                </div>
+                <!-- one doc end -->
+                {% end %}
+
+            </div>
+
+            <div class="col-md-5">
+
+                <div class="blog-post">
+                    <h3 class="blog-post-title">本企业基本信息</h3>
+                    <table class="table table-bordered table-striped">
+                        <tbody>
+                            <tr>
+                                <td class="warning">企业名称</td>
+                                <td>阳煤集团寺家庄煤矿</td>
+                                <td class="warning">企业性质</td>
+                                <td>有限责任公司</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- /.blog-post -->
+
+                <div class="blog-post">
+                    <h3 class="blog-post-title">本矿井基本信息</h3>
+                    <table class="table table-bordered table-striped">
+                        <tbody>
+                            <tr>
+                                <td class="info">煤矿级别</td>
+                                <td>3</td>
+                                <td class="info">煤矿类型</td>
+                                <td>地下煤矿</td>
+                            </tr>
+                
+                            <tr>
+                                <td class="info">证件情况</td>
+                                <td>是</td>
+                                <td class="info">审批情况</td>
+                                <td>是</td>
+                            </tr>
+                            <tr>
+                                <td class="info">设计生产能力</td>
+                                <td>500</td>
+                                <td class="info">实际生产能力</td>
+                                <td>500</td>
+                            </tr>
+                            <tr>
+                                <td class="info">从业人员数目</td>
+                                <td></td>
+                                <td class="info">煤矿瓦斯等级</td>
+                                <td>3</td>
+                            </tr>
+                            <tr>
+                                <td class="info">矿井开采方式</td>
+                                <td>综合开拓</td>
+                                <td class="info">矿井通风方式</td>
+                                <td>混合式通风</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- /.blog-post -->
+
+                <div class="blog-post">
+                    <h3 class="blog-post-title">事故地质水文条件</h3>
+                    <table class="table table-bordered table-striped">
+                        <tbody>
+                            <tr>
+                                <td class="info">地质构造复杂程度</td>
+                                <td>地质构造复杂程度中等</td>
+                            </tr>
+                            <tr>
+                                <td class="info">事故水文地质环境</td>
+                                <td>本井田基本属水文地质条件简单型，水文地质勘探类型以三类一型为主，二类一型为辅。</td>
+                            </tr>
+                
+                        </tbody>
+                    </table>
+                </div>
+                <!-- /.blog-post -->
+                
+                <div class="blog-post">
+                    <h3 class="blog-post-title">事故监测信息</h3>
+                    <table class="table table-bordered table-striped">
+                        <tbody>
+                            <tr>
+                                <td class="info">瓦斯含量（%）</td>
+                                <td></td>
+                                <td class="info">CO2含量（%）</td>
+                                <td></td>
+                            </tr>
+                
+                            <tr>
+                                <td class="info">CO含量（%）</td>
+                                <td></td>
+                                <td class="info">其他监测参数</td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    
+                </div>
+                <!-- /.blog-main -->
+                </div>
+                    
+                </div>
+                <!-- /.row -->
+                <nav>
+                    <ul class="pager">
+                        <li>
+                            <a href="#">Previous</a>
+                        </li>
+                        <li>
+                            <a href="#">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+
+            </div>
+            <!-- /.container -->
+
+            <!-- <footer class="blog-footer">
+      <p>Blog template built for <a href="http://getbootstrap.com">Bootstrap</a> by <a href="https://twitter.com/mdo">@mdo</a>.</p>
+      <p>
+        <a href="#">Back to top</a>
+      </p>
+    </footer> -->
+<script>
+    $("#search").bind("click",
+        function (e) {
+            query_phrase = $("#query_phrase").val();
+            url = "/case_search?q=" + query_phrase;
+            // alert(url)
+            window.location.href = url;
+        }
+    )
+</script>
+</body>
+
+</html>

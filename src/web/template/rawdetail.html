@@ -95,7 +95,7 @@
       <div class="col-md-6">
           <div class="panel panel-default">
             <div class="panel-heading">
-              <h3 class="panel-title">当前监测异常状况:</h3>
+              <h3 class="panel-title">当前监测异常状况:<span id='timestamp_0'></span></h3>
             </div>
             <div class="panel-body">
               <div id="gas_event"></div>
@@ -106,7 +106,7 @@
       <div class="col-md-6">
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h3 class="panel-title">依据异常状况综合分析结果:</h3>
+          <h3 class="panel-title">依据异常状况综合分析结果:<span id='timestamp_1'></span></h3>
         </div>
         <div class="panel-body">
           <div id="gas_summery_event">
@@ -237,6 +237,8 @@
           document.getElementById("gas_event").innerHTML = data['content'];
           document.getElementById("gas_summery_title").innerHTML = data['summery_title'];
           document.getElementById("gas_summery_content").innerHTML = data['summery_content'];
+          document.getElementById("timestamp_0").innerHTML = data['timestamp'];
+          document.getElementById("timestamp_1").innerHTML = data['timestamp'];
       }
     }
    

@@ -13,6 +13,10 @@ from launch import fmd, index2time
 from monitor.monitor_define import get_monitor_ids_by_type
 from decision.gas_analysis import SuggenstionType
 import aggregate_analysis
+from coal_case.caseobj import find_one_obj
+from coal_case.search import Search
+
+searcher = Search()
 
 class RawDetailHanlder(tornado.web.RequestHandler):
     def get(self):
@@ -79,7 +83,19 @@ class EscapeHandler(tornado.web.RequestHandler):
     def get(self):
         return self.render(webconf.path_template_escape)
 
+class FindOneCaseHandler(tornado.web.RequestHandler):
+    def get(self):
+        _id = self.get_argument('_id', "5c8fa0fb230b945f6e4de092")
+        obj = find_one_obj(_id)
+        
+        return self.render(webconf.path_template_formatdetail, mydoc = obj.format_mydoc(), obj=obj)
 
+
+class CaseSearchHandler(tornado.web.RequestHandler):
+    def get(self):
+        query = self.get_argument('q', "瓦斯突出")
+        obj_list = searcher.search(query)
+        return self.render(webconf.path_template_case_search, objs = obj_list)
 # settings and URL Mapping
 
 settings = {
@@ -93,7 +109,9 @@ application = tornado.web.Application([
         (r"/get_gas_suggestion", GetGasAnalysisSuggestionHandler),
         (r"/suggest_event",SuggestEventHandler),
         (r"/suggestion_electronic",ElectronicHandler),
-        (r"suggestion_escape",EscapeHandler),
+        (r"/suggestion_escape",EscapeHandler),
+        (r"/find_one", FindOneCaseHandler),
+        (r"/case_search", CaseSearchHandler),
     ],**settings)
 
 

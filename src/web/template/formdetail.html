@@ -1,0 +1,295 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>LRSearch</title>
+
+    <link href="static/css/bootstrap.min.css" rel="stylesheet">
+    <script src="static/js/jquery-3.2.1.min.js"></script>
+    <script src="static/js/bootstrap.min.js"></script>
+  </head>
+
+  <body>
+
+    <div class="blog-masthead">
+      <div class="container">
+        <nav class="blog-nav">
+          <a class="blog-nav-item active" href="#">Search</a>
+          <a class="blog-nav-item" href="#">Powered</a>
+          <a class="blog-nav-item" href="#">Contact</a>
+          <!-- <a class="blog-nav-item" href="#">New hires</a>
+          <a class="blog-nav-item" href="#">About</a> -->
+        </nav>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="blog-header">
+        <h2 class="blog-title">{{ obj.get_title() }}</h2>
+      </div>
+
+      <div class="row">
+
+        <div class="col-sm-8 blog-main">
+
+              <div class="blog-post">
+                <h3 class="blog-post-title">事故基本信息</h3>
+                <table class="table table-bordered table-striped">
+                  <tbody>
+                    <tr>
+                      <td class="info">事故时间</td>
+                      <td>{{mydoc['XSGJBXX']['SGSJ']}}</td>
+                      <td class="info">事故地点</td>
+                      <td>{{mydoc['XSGJBXX']['SGDD']}}</td>
+                    </tr>
+
+                    <tr>
+                      <td class="info">事故类型</td>
+                      <td>{{mydoc['XSGJBXX']['SGLX']}}</td>
+                      <td class="info">事故性质</td>
+                      <td>{{mydoc['XSGJBXX']['SGXZ']}}</td>
+                    </tr>
+
+                    <tr>
+                      <td class="info">死亡人数</td>
+                      <td>{{mydoc['XSGSSXX']['SWRS']}}</td>
+                      <td class="info">受伤人数</td>
+                      <td>{{mydoc['XSGSSXX']['SSRS']}}</td>
+                    </tr>
+                    <tr>
+                      <td class="info">直接损失</td>
+                      <td>{{mydoc['XSGSSXX']['ZJJJSS']}}</td>
+                      <td class="info">间接损失</td>
+                      <td>{{mydoc['XSGSSXX']['JJJJSS']}}</td>
+                    </tr>
+                    <tr>
+                      <td class="info">相应级别</td>
+                      <td>{{mydoc['XSGSSXX']['YJXYJB']}}</td>
+                      <td class="info">影响范围</td>
+                      <td>{{mydoc['XSGSSXX']['YXFW']}}</td>
+                    </tr>
+
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.blog-post -->
+
+          <div class="blog-post">
+            <h3 class="blog-post-title">企业信息</h3>
+
+            <table class="table table-bordered table-striped">
+                    <tbody>
+                      <tr>
+                        <td class="info">企业名称</td>
+                        <td>{{mydoc['XQYXX']['QYMC']}}</td>
+                        <td class="info">企业性质</td>
+                        <td>{{mydoc['XQYXX']['QYXZ']}}</td>
+                      </tr>
+                      
+                      <tr>
+                        <td class="info">数据来源</td>
+                        <td>煤矿安全生产网</td>
+                        <td class="info"></td>
+                        <td></td>
+                      </tr>
+                      
+                    </tbody>
+                  </table>
+          </div><!-- /.blog-post -->
+        
+          <div class="blog-post">
+                <h3 class="blog-post-title">矿井信息</h3>
+                <table class="table table-bordered table-striped">
+                        <tbody>
+                          <tr>
+                            <td class="info">煤矿级别</td>
+                            <td>{{mydoc['XKJXX']['MKJB']}}</td>
+                            <td class="info">煤矿类型</td>
+                            <td>{{mydoc['XKJXX']['MKLX']}}</td>
+                          </tr>
+                          
+                          <tr>
+                            <td class="info">证件情况</td>
+                            <td>{{mydoc['XKJXX']['WZYZ']}}</td>
+                            <td class="info">审批情况</td>
+                            <td>{{mydoc['XKJXX']['SPTG']}}</td>
+                          </tr>
+                          <tr>
+                            <td class="info">设计生产能力</td>
+                            <td>{{mydoc['XKJXX']['SJSCNL1']}}</td>
+                            <td class="info">实际生产能力</td>
+                            <td>{{mydoc['XKJXX']['SJSCNL2']}}</td>
+                          </tr>
+                          <tr>
+                            <td class="info">从业人员数目</td>
+                            <td>{{mydoc['XKJXX']['CYRYSL']}}</td>
+                            <td class="info">煤矿瓦斯等级</td>
+                            <td>{{mydoc['XKJXX']['KJWSDJ']}}</td>
+                        </tr>
+                        <tr>
+                          <td class="info">矿井开采方式</td>
+                          <td>{{mydoc['XKJXX']['KJKCFS']}}</td>
+                          <td class="info">矿井通风方式</td>
+                          <td>{{mydoc['XKJXX']['KJTFFS']}}</td>
+                        </tr>
+                        </tbody>
+                      </table>
+              </div><!-- /.blog-post -->
+
+             
+
+                <div class="blog-post">
+                  <h3 class="blog-post-title">事故地质水文条件</h3>
+                  <table class="table table-bordered table-striped">
+                    <tbody>
+                      <tr>
+                        <td class="info">地质构造复杂程度</td>
+                        <td>{{mydoc['XSGDZSWTJ']['DZGZFZCD']}}</td>
+                      </tr>
+                      <tr>
+                        <td class="info">事故水文地质环境</td>
+                        <td>{{mydoc['XSGDZSWTJ']['SGSWDZHJ']}}</td>
+                      </tr>
+
+                    </tbody>
+                  </table>
+                </div>
+                <!-- /.blog-post -->
+
+                <div class="blog-post">
+                  <h3 class="blog-post-title">事故监测信息</h3>
+                  <table class="table table-bordered table-striped">
+                    <tbody>
+                      <tr>
+                        <td class="info">瓦斯含量（%）</td>
+                        <td>{{mydoc['XSGJCXX']['CH4HL']}}</td>
+                        <td class="info">CO2含量（%）</td>
+                        <td>{{mydoc['XSGJCXX']['CO2HL']}}</td>
+                      </tr>
+                
+                      <tr>
+                        <td class="info">CO含量（%）</td>
+                        <td>{{mydoc['XSGJCXX']['COHL']}}</td>
+                        <td class="info">其他监测参数</td>
+                        <td>{{mydoc['XSGJCXX']['QTJCHS']}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <div class="blog-post">
+                        <h3 class="blog-post-title">事故过程</h3>
+                        <table class="table table-bordered table-striped">
+                                <tbody>
+                                  <tr>
+                                    <td class="info">过程描述</td>
+                                    <td>{% raw mydoc['XSGGC'] %}</td>
+                                  </tr>
+                                 
+                                </tbody>
+                              </table>
+                      </div><!-- /.blog-post -->
+
+                      <div class="blog-post">
+                            <h3 class="blog-post-title">原因分析</h3>
+                            <table class="table table-bordered table-striped">
+                                    <tbody>
+                                      <tr>
+                                        <!-- <th scope="row"></th> -->
+                                        <td class="info">直接原因</td>
+                                        <td>{% raw mydoc['XSGYY']['ZJYY'] %}</td>
+                                      </tr>
+                                      <tr>
+                                        <!-- <th scope="row"></th> -->
+                                        <td class="info">间接原因</td>
+                                        <td>{% raw mydoc['XSGYY']['JJYY'] %}</td>
+                                      </tr>
+                                      <tr>
+                                        <!-- <th scope="row"></th> -->
+                                        <td class="info">人为原因</td>
+                                        <td>{% raw mydoc['XSGYY']['RWYY'] %}</td>
+                                      </tr>
+                                      <tr>
+                                        <!-- <th scope="row"></th> -->
+                                        <td class="info">机械原因</td>
+                                        <td>{% raw mydoc['XSGYY']['JXYY'] %}</td>
+                                      </tr>
+                                      <tr>
+                                        <!-- <th scope="row"></th> -->
+                                        <td class="info">管理原因</td>
+                                        <td>{% raw mydoc['XSGYY']['GLYY'] %}</td>
+                                      </tr>
+                                      <tr>
+                                        <!-- <th scope="row"></th> -->
+                                        <td class="info">环境原因</td>
+                                        <td>{% raw mydoc['XSGYY']['HJYY'] %}</td>
+                                      </tr>
+                                    
+                                    </tbody>
+                                  </table>
+                          </div><!-- /.blog-post -->
+                  
+                          <div class="blog-post">
+                            <h3 class="blog-post-title">救援措施</h3>
+                            <table class="table table-bordered table-striped">
+                              <tbody>
+                                <tr>
+                                  <td class="info">措施描述</td>
+                                  <td>{% raw mydoc['XSGJYCS'] %}</td>
+                                </tr>
+                          
+                              </tbody>
+                            </table>
+                          </div>
+                          <!-- /.blog-post -->
+
+                          <div class="blog-post">
+                            <h3 class="blog-post-title">防范措施</h3>
+                            <table class="table table-bordered table-striped">
+                              <tbody>
+                                <tr>
+                                  <td class="info">措施描述</td>
+                                  <td>{% raw mydoc['XSGFFCS'] %}</td>
+                                </tr>
+                          
+                              </tbody>
+                            </table>
+                          </div>
+                          <!-- /.blog-post -->
+          <nav>
+            <ul class="pager">
+              <li><a href="#">Previous</a></li>
+              <li><a href="#">Next</a></li>
+            </ul>
+          </nav>
+
+        </div><!-- /.blog-main -->
+
+        <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+          
+
+          <div class="sidebar-module">
+           
+        </div><!-- /.blog-sidebar -->
+
+      </div><!-- /.row -->
+
+    </div><!-- /.container -->
+
+    <!-- <footer class="blog-footer">
+      <p>Blog template built for <a href="http://getbootstrap.com">Bootstrap</a> by <a href="https://twitter.com/mdo">@mdo</a>.</p>
+      <p>
+        <a href="#">Back to top</a>
+      </p>
+    </footer> -->
+
+  </body>
+</html>

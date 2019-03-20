@@ -54,10 +54,10 @@ def launch_trigger_engine(gas_analysis_obj):
         data = fmd.get_cur_data(index=cur_index)
         print('index=',cur_index, 'time=', cur_time)
         te.real_run(data, _timestamp=cur_time)
+        time.sleep(0.5)
         cur_time += time_delta
         last_time_index = cur_index
         cur_index += 1
-        time.sleep(1)
 
 
 def launch():

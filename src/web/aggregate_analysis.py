@@ -12,6 +12,7 @@ def aggregate_event(gas_analysis_obj):
 
     res['update'] = True
     gas_analysis_event = gas_analysis_obj.result_event
+    res['timestamp'] = str(gas_analysis_event.timestamp)
     event_items = []
 
     # over_limit
@@ -59,7 +60,7 @@ def aggregate_event(gas_analysis_obj):
     for item in temp_content_list:
         temp_content += '<li>%s</li>' % item
     temp_content += "</ul>"
-    res['summery_content'] = "<h4> <p class='text-%s'>  %s </p> </h4>" % (color_type,temp_content)
+    res['summery_content'] = "<h5> <p class='text-%s'>  %s </p> </h5>" % (color_type,temp_content)
     return res
 
 
