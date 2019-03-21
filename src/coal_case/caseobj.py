@@ -68,7 +68,7 @@ class CaseObj(object):
         res = []
         for query in self.query_list:
             res.append(self.get_content_search_one(query))
-        return ".........".join(res)
+        return ".........".join(res[0:3])
 
     def get_content_search_one(self, cur_query):
         string = self.res['CONTENT']
@@ -81,7 +81,7 @@ class CaseObj(object):
         origin = string[i:j]
         returnString = ''
         for char in origin:
-            if char in cur_query:
+            if char in self.query:
                 char = '<hltext>' + char + '</hltext>'
             returnString += char
         return returnString

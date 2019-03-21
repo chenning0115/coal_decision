@@ -4,7 +4,7 @@ import tornado.web
 import os
 import sys
 import math
-import json, threading
+import json, threading,time
 sys.path.append(os.path.dirname(__file__))
 sys.path.append(os.path.join(os.path.dirname(__file__),'../'))
 import webconf
@@ -15,6 +15,7 @@ from decision.gas_analysis import SuggenstionType
 import aggregate_analysis
 from coal_case.caseobj import find_one_obj
 from coal_case.search import Search
+from suggestion_function import suggest_electronic
 
 searcher = Search()
 
@@ -77,7 +78,20 @@ class SuggestEventHandler(tornado.web.RequestHandler):
 
 class ElectronicHandler(tornado.web.RequestHandler):
     def get(self):
-        return self.render(webconf.path_template_electronic)
+        gas_analysis_obj = get_gas_analysis_obj()
+        r1 = aggregate_analysis.aggregate_event(gas_analysis_obj)
+        r2 = suggest_electronic(gas_analysis_obj)
+        
+        return self.render(webconf.path_template_electronic,r1=r1, r2=r2)
+
+class ElecSureHandler(tornado.web.RequestHandler):
+    def get(self):
+        time.sleep(2)
+        res = {
+            "status":"ok",
+            "info":"已经转发控制系统，确认停止该位置电力供应。",
+        }
+        self.write(json.dumps(res))
 
 class EscapeHandler(tornado.web.RequestHandler):
     def get(self):
@@ -148,6 +162,7 @@ application = tornado.web.Application([
         (r"/suggestion_escape",EscapeHandler),
         (r"/find_one", FindOneCaseHandler),
         (r"/case_search", CaseSearchHandler),
+        (r"/elec_sure", ElecSureHandler),
     ],**settings)
 
 

@@ -43,6 +43,9 @@ class Search(object):
             word_id2num[word] = id2num
             idset.update(set(id2num.keys()))
         ids = list(idset)
+        final_words = [word for word,s in words]
+        if len(ids) <= 0:
+            return [], final_words
         id2index = {_id:i for i,_id in enumerate(ids)}
         title_matrix = [[0]*len(words) for i in range(len(ids))]
         content_matrix = [[0]*len(words) for i in range(len(ids))]
@@ -83,7 +86,7 @@ class Search(object):
             return (grad-x)/(y-x) * (b-a) + a
         grad = linear_map(grad)
         res = [[_id,i] for _id,i in zip(ids,list(grad))]
-        final_words = [word for word,s in words]
+        
         return res, final_words
             
 

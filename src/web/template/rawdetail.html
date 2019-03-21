@@ -30,7 +30,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="#">Bootstrap theme</a>
+        <a class="navbar-brand" href="\home">煤矿瓦斯预警与应急决策支持系统</a>
       </div>
       <div id="navbar" class="navbar-collapse collapse">
         <ul class="nav navbar-nav">
@@ -50,20 +50,6 @@
             <ul class="dropdown-menu">
               <li>
                 <a href="#">Action</a>
-              </li>
-              <li>
-                <a href="#">Another action</a>
-              </li>
-              <li>
-                <a href="#">Something else here</a>
-              </li>
-              <li role="separator" class="divider"></li>
-              <li class="dropdown-header">Nav header</li>
-              <li>
-                <a href="#">Separated link</a>
-              </li>
-              <li>
-                <a href="#">One more separated link</a>
               </li>
             </ul>
           </li>
@@ -102,6 +88,10 @@
             </div>
           </div>
       </div>
+
+      <!-- <div class="col-md-2 ">
+        <img src="static/images/right.jpeg" width="150" height="150" class="img-circle">
+      </div> -->
 
       <div class="col-md-6">
       <div class="panel panel-default">
@@ -148,6 +138,28 @@
   </div>
   
 
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 id="alert_sug_title" class="modal-title" id="myModalLabel">正在执行决策...</h4>
+      </div>
+      <div class="modal-body">
+        <img alt="" width="150" height="100" class="img-circle" src="static/images/loading.jpg" /> 
+        <span id="alert_sug_content"> </span>
+      </div>
+      <div class="modal-footer">
+        <!-- <button type="button" class="btn btn-primary" data-dismiss="modal">确认</button> -->
+        <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+
   <div class="container" role="main">
     <footer class="blog-footer">
       <p>北京大学智慧能源与工程中心
@@ -161,6 +173,16 @@
 
 
   <script type="text/javascript">
+
+  function hideModal() {
+    $('#myModal').modal('hide');
+  }
+
+  function showModal() {
+    $('#myModal').modal({ backdrop: 'static', keyboard: false });
+  }
+
+
   // echarts
   function draw_gas_line_chart(data) {
     data = eval("(" + data + ")")
@@ -275,14 +297,26 @@
       base_url = '/suggest_event?sug_id='
       sug_id = $("#suggest_click").attr("sug_id")
       url = base_url + sug_id
-      $.get(url, function (data) {
-        data = eval("(" + data + ")")
-        operate = data['operate'];
-        if(operate == 'redirect'){
-          window.location.href = data['url'];
+      $.ajax({
+        url: url,
+        async: true,
+        type: "GET",
+        data: {},
+        beforeSend: function () {
+          // document.getElementById("alert_sug_title").innerHTML = "" + $("#suggest_click").attr("sug_title");
+          document.getElementById("alert_sug_content").innerHTML = "正在" + $("#suggest_click").attr("sug_title") + ",请稍等...";
+          showModal();
+        },
+        success: function (data) {
+          data = eval("(" + data + ")")
+          operate = data['operate'];
+          setTimeout(hideModal, 2000)
+          if (operate == 'redirect') {
+            window.location.href = data['url'];
+          }
         }
-      })
-      // alert('hahahah')
+      });
+      
     }
 
     $("#case_search").bind("click", function(e) {
