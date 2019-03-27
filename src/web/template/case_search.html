@@ -114,73 +114,71 @@
                 <h2 class="blog-post-title">查询时间:{{ timestr }}</h2>
 
                 <div class="blog-post">
-                    <h3 class="blog-post-title">监控情况</h3>
+                    <h3 class="blog-post-title">当前工作面信息:W15117工作面</h3>
                     <table class="table table-bordered table-striped">
-                        <thead>
-                            <tr>
-                                <th>传感器编号</th>
-                                <th>传感器位置</th>
-                                <th>监测类型</th>
-                                <th>检测值</th>
-                            </tr>
-                        </thead>
+                        
                         <tbody>
-                            {% for item in monitor_data %}
-                            <tr class="info">
-                                <td>{{ item[0] }}</td>
-                                <td>{{ item[1] }}</td>
-                                <td>{{ item[2] }}</td>
-                                <td>{{ item[3] }}</td>
+                            <tr>
+                                <td class="info">工作面类型</td>
+                                <td>回采工作面</td>
+                                <td class="info">日产量</td>
+                                <td>1.2</td>
                             </tr>
-                            {% end %}
+                            <tr>
+                                <td class="info">采高</td>
+                                <td>5.4</td>
+                                <td class="info">通风方式</td>
+                                <td>U型</td>
+                            </tr>
+                            <tr>
+                                <td class="info">平均倾角</td>
+                                <td>6</td>
+                                <td class="info">平均埋深</td>
+                                <td>490</td>
+                            </tr>
+                            <tr>
+                                <td class="info">走向长度</td>
+                                <td>1257</td>
+                                <td class="info">工作面长度</td>
+                                <td>220</td>
+                            </tr>
+                            <tr>
+                                <td class="info">瓦斯含量</td>
+                                <td>9-10</td>
+                                <td class="info">绝对瓦斯涌出量</td>
+                                <td>83</td>
+                            </tr>
+                            <tr>
+                                <td class="info">透气性数</td>
+                                <td>0.175</td>
+                                <td class="info">最大瓦斯压力</td>
+                                <td>0.4</td>
+                            </tr>
+                            <tr>
+                                <td class="info">普氏系数</td>
+                                <td>0.21</td>
+                                <td class="info">构造情况</td>
+                                <td>简单</td>
+                            </tr>
+                            <tr>
+                                <td class="info">采煤工艺</td>
+                                <td>一次采全高综采自动化</td>
+                                <td class="info">顶板管理</td>
+                                <td>全部垮落法</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
-                <!-- /.blog-post -->
-                
-                <div class="blog-post">
-                    <h3 class="blog-post-title">本企业基本信息</h3>
-                    <table class="table table-bordered table-striped">
-                        <tbody>
-                            <tr>
-                                <td class="info">企业名称</td>
-                                <td>阳煤集团寺家庄煤矿</td>
-                                <td class="info">企业性质</td>
-                                <td>有限责任公司</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <!-- /.blog-post -->
 
                 <div class="blog-post">
-                    <h3 class="blog-post-title">本矿井基本信息</h3>
+                    <h3 class="blog-post-title">当前矿井基本信息</h3>
                     <table class="table table-bordered table-striped">
                         <tbody>
                             <tr>
                                 <td class="info">煤矿级别</td>
-                                <td>3</td>
+                                <td>国有重点煤矿</td>
                                 <td class="info">煤矿类型</td>
                                 <td>地下煤矿</td>
-                            </tr>
-                
-                            <tr>
-                                <td class="info">证件情况</td>
-                                <td>是</td>
-                                <td class="info">审批情况</td>
-                                <td>是</td>
-                            </tr>
-                            <tr>
-                                <td class="info">设计生产能力</td>
-                                <td>500</td>
-                                <td class="info">实际生产能力</td>
-                                <td>500</td>
-                            </tr>
-                            <tr>
-                                <td class="info">从业人员数目</td>
-                                <td></td>
-                                <td class="info">煤矿瓦斯等级</td>
-                                <td>3</td>
                             </tr>
                             <tr>
                                 <td class="info">矿井开采方式</td>
@@ -188,6 +186,20 @@
                                 <td class="info">矿井通风方式</td>
                                 <td>混合式通风</td>
                             </tr>
+                            <tr>
+                                <td class="info">煤矿瓦斯等级</td>
+                                <td>瓦斯突出矿井</td>
+                                <td class="info">从业人员数目</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td class="info">设计生产能力</td>
+                                <td>500</td>
+                                <td class="info">实际生产能力</td>
+                                <td>500</td>
+                            </tr>
+                            
+                           
                         </tbody>
                     </table>
                 </div>

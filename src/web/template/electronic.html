@@ -196,8 +196,9 @@
             //  alert(data.info);
              hideModal();
            } else {
-             alert(data);
-             hideModal();
+             document.getElementById("ele_sure_response").innerHTML = data['info'];
+             $('#ele_modal').modal('show');
+             
            }
          }
        });

@@ -1,0 +1,142 @@
+/* (c) Copyright 2016 周炳光. All Rights Reserved. */
+
+
+/*重置本时间轴ul,li默认样式*/
+ul.zbg-timeline,
+ul.zbg-timeline>li {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+ul.zbg-timeline {
+	margin: 5px;
+	margin-left: 155px;
+	border-left: solid 10px #afdcf8;
+	font-family: Helvetica, Tahoma, Arial, STXihei, “华文细黑”, “Microsoft YaHei”, “微软雅黑”, SimSun, “宋体”, Heiti, “黑体”, sans-serif;
+}
+ul.zbg-timeline>li {
+	position: relative;
+	padding-bottom: 20px;
+}
+ul.zbg-timeline>li:last-child {
+	padding-bottom: 0;
+}
+.zbg-tl-order,
+.zbg-tl-time {
+	position: absolute;
+}
+.zbg-tl-order {
+	width: 36px;
+	height: 36px;
+	line-height: 36px;
+	left: -28px;
+	top: -1px;
+	background-color: #46a4da;
+	border: solid 5px #afdcf8;
+	border-radius: 50%;
+	animation: zbg-tl-ripple 0.6s infinite alternate;
+	text-align: center;
+	color: #fff;
+}
+@keyframes zbg-tl-ripple {
+	from { box-shadow: 0 0 0 0 #afdcf8; }
+	to { box-shadow: 0 0 10px 0 #afdcf8; }
+}
+.zbg-tl-time {
+	width: 125px;
+	left: -165px;
+	text-align: right;
+}
+.zbg-tl-time span {
+	display: block;
+	text-align: right;
+	font-size: 2.9em;
+	color: #3594cb;
+}
+.zbg-tl-time span:first-child {
+	font-size: 0.9em;
+	color: #bdd0db;
+}
+.zbg-tl-content:before {
+	position: absolute;
+	left: -19px;
+	top: 13px;
+	content: "";
+	display: inline-block;
+	width: 0px;
+	height: 0px;
+	border: solid 10px transparent;
+	border-right-color: #3594cb;
+}
+.zbg-tl-content {
+	position: relative;
+	margin-left: 40px;
+	background-color: #3594cb;
+	border-radius: 5px;
+	padding: 2em;
+	color: #fff;
+	word-break: break-all;
+	text-align: justify;
+}
+.zbg-tl-content>h2:first-child {
+	margin-top: 0;
+	padding: 0 0 10px;
+	border-bottom: 1px solid #eee;
+}
+
+/*相邻项颜色交替*/
+.zbg-timeline>li:nth-child(even) .zbg-tl-time span:last-child {
+	color: #6cbfee;
+}
+.zbg-timeline>li:nth-child(even) .zbg-tl-content:before {
+	border-right-color: #6cbfee;
+}
+.zbg-timeline>li:nth-child(even) .zbg-tl-content {
+	background-color: #6cbfee;
+}
+
+/* 媒体查询 */
+@media screen and (max-width:990px) {
+	ul.zbg-timeline {
+		margin-left: 110px;
+	}
+	.zbg-tl-time {
+		width: 85px;
+		left: -120px;
+	}
+	.zbg-tl-time span {
+		font-size: 1.9em;
+	}
+	.zbg-tl-content {
+		margin-left: 35px;
+		padding: 1.5em;
+	}
+}
+@media screen and (max-width:665px) {
+	ul.zbg-timeline {
+		margin-left: 23px;
+	}
+	.zbg-tl-time {
+		position: static;
+		margin-left: 23px;
+	}
+	.zbg-tl-time span {
+		text-align: left;
+		font-size: 1.8em;
+	}
+	.zbg-tl-content:before {
+		left: 26px;
+		top: -19px;
+		border-color: transparent transparent #3594cb;
+	}
+	.zbg-tl-content {
+		margin-top: 10px;
+		margin-left: 23px;
+		padding: 1em;
+	}
+	/*相邻项颜色交替*/
+	.zbg-timeline>li:nth-child(even) .zbg-tl-content:before {
+		border-color: transparent transparent #6cbfee;
+	}
+}

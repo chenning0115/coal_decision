@@ -66,9 +66,12 @@ class CaseObj(object):
 
     def get_content_search(self):
         res = []
-        for query in self.query_list:
+        temp_list = [(q,len(q)) for q in self.query_list]
+        temp_list = sorted(temp_list,key=lambda  x: x[1])
+        temp_list = [q[0] for q in temp_list]
+        for query in temp_list:
             res.append(self.get_content_search_one(query))
-        return ".........".join(res[0:3])
+        return ".........".join(res[0:5])
 
     def get_content_search_one(self, cur_query):
         string = self.res['CONTENT']

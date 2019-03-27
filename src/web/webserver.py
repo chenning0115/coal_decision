@@ -16,6 +16,7 @@ import aggregate_analysis
 from coal_case.caseobj import find_one_obj
 from coal_case.search import Search
 from suggestion_function import suggest_electronic
+from xlog.xlog import xlogger
 
 searcher = Search()
 
@@ -60,13 +61,14 @@ class GetGasAnalysisSuggestionHandler(tornado.web.RequestHandler):
       
 class SuggestEventHandler(tornado.web.RequestHandler):
     def get(self):
+        update, cur_index, cur_time = get_cur_time()
         res = {}
         sug_id = self.get_argument('sug_id', None)
         gas_analysis_obj = get_gas_analysis_obj()
         sug_obj = gas_analysis_obj.suggestion_analysis_obj.get_suggestion_info(sug_id)
         if sug_obj.suggenstion_type == SuggenstionType.SUGGESTION_SIMPLE_ACTION:
             if sug_obj.execute_func is not None:
-                sug_obj.execute(gas_analysis_obj)
+                sug_obj.execute(gas_analysis_obj,xlogger,cur_time)
         elif sug_obj.suggenstion_type in [SuggenstionType.SUGGESTION_ORGANIZE,
                             SuggenstionType.SUGGESTION_ELECTONIC,
                             SuggenstionType.SUGGESTION_AIR]:
@@ -86,11 +88,16 @@ class ElectronicHandler(tornado.web.RequestHandler):
 
 class ElecSureHandler(tornado.web.RequestHandler):
     def get(self):
+        update, cur_index, cur_time = get_cur_time()
+        xlogger.append_log(cur_time, "提交断电请求","已经向电力控制系统提交断电请求...")
         time.sleep(2)
         res = {
             "status":"ok",
             "info":"已经转发控制系统，确认停止该位置电力供应。",
         }
+        # 记录Log
+        update, cur_index, cur_time = get_cur_time()
+        xlogger.append_log(cur_time, "确认断电成功","获取电力控制系统断电成功信息...")
         self.write(json.dumps(res))
 
 class EscapeHandler(tornado.web.RequestHandler):
@@ -143,7 +150,14 @@ class CaseSearchHandler(tornado.web.RequestHandler):
         return self.render(webconf.path_template_case_search, objs = obj_list,
                  monitor_data=monitor_data, timestr=str(cur_time), query=str(query))
 
+class TimelineHandler(tornado.web.RequestHandler):
+    def get(self):
+        return self.render(webconf.path_template_timeline)
 
+class TimelineDataHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.write(xlogger.get_json())
+        
 
 
 # settings and URL Mapping
@@ -163,6 +177,8 @@ application = tornado.web.Application([
         (r"/find_one", FindOneCaseHandler),
         (r"/case_search", CaseSearchHandler),
         (r"/elec_sure", ElecSureHandler),
+        (r"/timeline", TimelineHandler),
+        (r"/timeline_data", TimelineDataHandler),
     ],**settings)
 
 
