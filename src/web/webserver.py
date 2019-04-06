@@ -107,8 +107,9 @@ class EscapeHandler(tornado.web.RequestHandler):
 class FindOneCaseHandler(tornado.web.RequestHandler):
     def get(self):
         _id = self.get_argument('_id', "5c8fa0fb230b945f6e4de092")
+        _query = self.get_argument('_query',"")
         obj = find_one_obj(_id)
-        
+        obj.query = _query
         return self.render(webconf.path_template_formatdetail, mydoc = obj.format_mydoc(), obj=obj)
 
 
@@ -147,6 +148,16 @@ class CaseSearchHandler(tornado.web.RequestHandler):
                 pass
         
         obj_list = searcher.search(query, target_case_monitor)
+
+        #just for extract
+        # path = '../../data/extract/%s.txt' % (query)
+        # if not os.path.exists(path):
+        #     with open(path ,"w") as fout:
+        #         for obj in obj_list:
+        #             fout.write('%s\n' % (obj.sid))
+        #         fout.flush()
+        #     print('create file done.')
+
         return self.render(webconf.path_template_case_search, objs = obj_list,
                  monitor_data=monitor_data, timestr=str(cur_time), query=str(query))
 

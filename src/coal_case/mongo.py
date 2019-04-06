@@ -10,7 +10,7 @@ import pandas as pd
 #mongodb info
 mongo_url = "mongodb://localhost:27017"
 mongo_db_name = "coal_decision"
-mongo_collection_rawdata = "coal_accident_case"
+mongo_collection_rawdata = "coal_accident_case_new"
 
 # mongo object already threadpool, so just create the mongo instance instead of using singleton schema
 def get_mongo_conn2coaldb():
@@ -119,7 +119,25 @@ case_meta = {
     'ALYXCS': '案例有效次数',
     'DFAXGDPF': '对方案效果的评分',
     'DFAXGDMS': '对方案效果的描述',
-    'BZ8': '备注8'
+    'BZ8': '备注8',
+
+    'GZMLX':'工作面类型',
+    'JTWZ':'具体位置',
+    'RCL':'日产量',
+    'ZXCD':'走向长度',
+    'GZMCD':'工作面长度',
+    'MCZRQX':'煤层自燃倾向性',
+    'MCBZ':'煤尘爆炸倾向',
+    'MCHD':'煤层厚度',
+    'PJQJ':'平均倾角',
+    'PJMS':'平均埋深',
+    'JFXXS':'坚固性系数',
+    'WSHL':'瓦斯含量',
+    'TQXXS':'透气性系数',
+    'ZDWSYL':'最大瓦斯压力',
+    'CMGY':'采煤工艺',
+    'DBGL':'顶板管理',
+    'QQT':'其他'
 }
 
 meta_MKJB = {
@@ -181,7 +199,7 @@ class CaseSaver(object):
                 'GLYY':raw['GLYY'],
                 'HJYY':raw['HJYY'],
             },
-
+            ''
             'XSGJYCS':raw['SGJYCSYW'],
             'XSGSSXX':{
                 'SWRS':raw['SWRS'],
@@ -191,6 +209,26 @@ class CaseSaver(object):
                 'YJXYJB':raw['YJXYJB'],
                 'YXFW':raw['YXFW']
             },
+            'GZMLX':raw['GZMLX'],
+            'SJSCNL2':raw['SJSCNL2'], 
+            'JTWZ':raw['JTWZ'],
+            'RCL':raw['RCL'],
+            'ZXCD':raw['ZXCD'],
+            'GZMCD':raw['GZMCD'],
+            'MCZRQX':raw['MCZRQX'],
+            'MCBZ':raw['MCBZ'],
+            'MCHD':raw['MCHD'],
+            'PJQJ':raw['PJQJ'],
+            'PJMS':raw['PJMS'],
+            'JFXXS':raw['JFXXS'],
+            'WSHL':raw['WSHL'],
+            'TQXXS':raw['TQXXS'],
+            'ZDWSYL':raw['ZDWSYL'],
+            'CMGY':raw['CMGY'],
+            'DBGL':raw['DBGL'],
+            'QQT':raw['QQT'],
+            'ZQXDWSYCL':raw['ZQXDWSYCL'],
+            'ZQJDWSYCL':raw['ZQJDWSYCL'],
             'XSGFFCS':raw['SGFFCSYW'],
             "TITLE":str(raw['SGSJ'])+str(raw['SGDD'])+str(raw['SGLX']),
         }
@@ -226,8 +264,8 @@ def insert_data():
     cs.insert(path)
 
 if __name__ == "__main__":
-    # insert_data()
-    print(find_one("5c90c720230b941089090b50"))
+    insert_data()
+    # print(find_one("5c90c720230b941089090b50"))
 
     
     

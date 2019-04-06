@@ -10,6 +10,9 @@ from reverse_index import Segmenter,Indexer
 from collections import defaultdict
 from caseobj import CaseObj
 from simcase import target_case_fixed,calculate_sim
+import math
+
+MINNUM=-1E10
 
 class Search(object):
     def __init__(self):
@@ -18,6 +21,7 @@ class Search(object):
 
     def search(self,query,target_case_monitor=None):
         id_grad_list, query_list = self.search_algorithm_new(query)
+
         case_obj_list = []
         for _id, grad in id_grad_list:
             # print(_id,grad)
@@ -26,11 +30,80 @@ class Search(object):
             temp_obj.query_list = query_list
             temp_obj.match_grad = grad
             temp_obj.target_case_fixed = target_case_fixed
-            temp_obj.sim_result = calculate_sim(temp_obj.res, target_case_fixed, target_case_monitor)
-            temp_obj.cal_grad()
+            
             case_obj_list.append(temp_obj)
+
+        cols = ['SJSCNL2','ZXCD','GZMCD','JFXXS','TQXXS']
+        case_obj_list, target_case_fixed_new = self.cal_rank_for_specific_col(case_obj_list,cols,target_case_fixed)
+        # print(target_case_fixed_new)
+
+        ll = []
+        for temp_obj in case_obj_list:
+            temp_obj.sim_result = calculate_sim(temp_obj.res, target_case_fixed_new, target_case_monitor)
+            ll.append(temp_obj.sim_result.cal_sim_grad())
+        def linear_map(grad, a=0, b=10):
+            grad = np.asarray(grad)
+            x,y = np.min(grad),np.max(grad)
+            if y-x==0:
+                return np.asarray(list(range(len(grad))))
+            return (grad-x)/(y-x) * (b-a) + a
+        print('before',max(ll),min(ll),ll)
+        ll = linear_map(ll)
+        print('after:',ll)
+        for i, temp_obj in enumerate(case_obj_list):
+            temp_obj.sim_grad = ll[i]
+            temp_obj.cal_grad()
+
         case_obj_list = sorted(case_obj_list, key= lambda x: x.grad, reverse=True)
         return case_obj_list
+
+    def cal_rank_for_specific_col(self, case_obj_list, cols, target_case_fixed):
+        def reindex(case_obj_list, col, new_col, target_val):
+            target_val = float(target_val)
+            # print('target_val=',target_val)
+            ll = []
+            for obj in case_obj_list:
+                t = float(obj.res[col])
+                if math.isnan(t):
+                    ll.append(MINNUM)
+                else:
+                    ll.append(t)
+            # print('pre:',ll)
+            ll = sorted(set(ll))
+            # print("after:",ll)
+            for i, n in enumerate(ll):
+                if target_val <= n:
+                    break
+            target_index = i
+            # print('target_index=',target_index)
+            n2index = {}
+            
+            
+            for i,n in enumerate(ll):
+                t = abs(target_index - i)
+                n2index[n] = t 
+            # print('before=',n2index)
+            nan_val = max(n2index.values())
+            for k in n2index.keys():
+                n2index[k] = 10 - n2index[k]/(nan_val+1e-10)*10
+            # print("after=",n2index)
+            for obj in case_obj_list:
+                t = float(obj.res[col])
+                if math.isnan(t):
+                    obj.res[new_col] = 0
+                else:
+                    obj.res[new_col] = n2index[t]
+            # print('dict',n2index)
+            # for obj in case_obj_list:
+            #     print(new_col,obj.res[new_col])
+        for col in cols:
+            new_col = "RANK_%s" % col
+            target_item = target_case_fixed[col]
+            target_case_fixed[new_col] = target_item
+            target_val = target_item[0]
+            reindex(case_obj_list, col, new_col, target_val)
+        
+        return case_obj_list, target_case_fixed
 
 
     def search_algorithm_new(self, query):
@@ -79,7 +152,7 @@ class Search(object):
         weight = querywords_weight(words)
         grad = np.sum(fuse_matrix*weight, 1)
         # print(grad)
-        def linear_map(l, a=0, b=10):
+        def linear_map(grad, a=0, b=10):
             x,y = np.min(grad),np.max(grad)
             if y-x==0:
                 return np.asarray(list(range(len(grad))))

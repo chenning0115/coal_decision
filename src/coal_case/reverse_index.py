@@ -14,7 +14,7 @@ from mongo import get_mongo_conn2coaldb, mongo_collection_rawdata
 
 path_vocab = os.path.join(os.path.dirname(__file__),"../../data/vocab/vocab_0.txt") 
 path_stop = os.path.join(os.path.dirname(__file__),"../../data/vocab/stopwords_0.txt")
-path_index = os.path.join(os.path.dirname(__file__),"../../data/vocab/index.txt")
+path_index = os.path.join(os.path.dirname(__file__),"../../data/vocab/index_new.txt")
 
 
 class Segmenter(object):

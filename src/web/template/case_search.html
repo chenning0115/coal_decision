@@ -101,7 +101,7 @@
                         {% raw doc.get_content_search() %}
                     </p>
                     <p style="color:aquamarine">
-                        <a href=" {{ doc.get_url_ori() }}"> {{ doc._id }}</a>
+                        <a href=" {{ doc.get_url_ori() }}"> {{ doc._id }} nid={{doc.sid}}</a>
                         <span>{% raw doc.get_grads() %}</span>
                     </p>
                 </div>
@@ -114,27 +114,27 @@
                 <h2 class="blog-post-title">查询时间:{{ timestr }}</h2>
 
                 <div class="blog-post">
-                    <h3 class="blog-post-title">当前工作面信息:W15117工作面</h3>
+                    <h3 class="blog-post-title">W15117工作面</h3>
                     <table class="table table-bordered table-striped">
                         
                         <tbody>
                             <tr>
-                                <td class="info">工作面类型</td>
+                                <td class="info">位置信息</td>
                                 <td>回采工作面</td>
-                                <td class="info">日产量</td>
-                                <td>1.2</td>
+                                <td class="info">生产能力</td>
+                                <td>1.2*365</td>
                             </tr>
                             <tr>
-                                <td class="info">采高</td>
+                                <td class="info">煤层厚度</td>
                                 <td>5.4</td>
-                                <td class="info">通风方式</td>
-                                <td>U型</td>
-                            </tr>
-                            <tr>
                                 <td class="info">平均倾角</td>
                                 <td>6</td>
-                                <td class="info">平均埋深</td>
-                                <td>490</td>
+                            </tr>
+                            <tr>
+                                <td class="info">煤层自燃倾向</td>
+                                <td>无自燃倾向</td>
+                                <td class="info">煤尘爆炸倾向</td>
+                                <td>无爆炸倾向</td>
                             </tr>
                             <tr>
                                 <td class="info">走向长度</td>
@@ -143,29 +143,25 @@
                                 <td>220</td>
                             </tr>
                             <tr>
-                                <td class="info">瓦斯含量</td>
-                                <td>9-10</td>
-                                <td class="info">绝对瓦斯涌出量</td>
-                                <td>83</td>
-                            </tr>
-                            <tr>
+                                <td class="info">坚固性系数</td>
+                                <td>0.21</td>
                                 <td class="info">透气性数</td>
                                 <td>0.175</td>
-                                <td class="info">最大瓦斯压力</td>
-                                <td>0.4</td>
                             </tr>
                             <tr>
-                                <td class="info">普氏系数</td>
-                                <td>0.21</td>
-                                <td class="info">构造情况</td>
-                                <td>简单</td>
+                                <td class="info">绝对瓦斯涌出量</td>
+                                <td>83</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <!-- <tr>
+                                <td class="info">顶板管理</td>
+                                <td>全部垮落法</td>
                             </tr>
                             <tr>
                                 <td class="info">采煤工艺</td>
                                 <td>一次采全高综采自动化</td>
-                                <td class="info">顶板管理</td>
-                                <td>全部垮落法</td>
-                            </tr>
+                            </tr> -->
                         </tbody>
                     </table>
                 </div>
@@ -175,12 +171,6 @@
                     <table class="table table-bordered table-striped">
                         <tbody>
                             <tr>
-                                <td class="info">煤矿级别</td>
-                                <td>国有重点煤矿</td>
-                                <td class="info">煤矿类型</td>
-                                <td>地下煤矿</td>
-                            </tr>
-                            <tr>
                                 <td class="info">矿井开采方式</td>
                                 <td>综合开拓</td>
                                 <td class="info">矿井通风方式</td>
@@ -189,17 +179,22 @@
                             <tr>
                                 <td class="info">煤矿瓦斯等级</td>
                                 <td>瓦斯突出矿井</td>
-                                <td class="info">从业人员数目</td>
+                                <td></td>
                                 <td></td>
                             </tr>
                             <tr>
-                                <td class="info">设计生产能力</td>
-                                <td>500</td>
-                                <td class="info">实际生产能力</td>
-                                <td>500</td>
+                                <td class="info">煤矿级别</td>
+                                <td>国有重点煤矿</td>
+                                <td class="info">煤矿类型</td>
+                                <td>地下煤矿</td>
                             </tr>
                             
-                           
+                            <!-- <tr>
+                                <td class="info">相对瓦斯涌出量</td>
+                                <td>9.96</td>
+                                <td></td>
+                                <td></td>
+                            </tr> -->
                         </tbody>
                     </table>
                 </div>
