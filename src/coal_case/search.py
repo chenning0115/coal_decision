@@ -84,8 +84,12 @@ class Search(object):
                 n2index[n] = t 
             # print('before=',n2index)
             nan_val = max(n2index.values())
+            min_val = min(n2index.values())
             for k in n2index.keys():
-                n2index[k] = 10 - n2index[k]/(nan_val+1e-10)*10
+                if len(ll)>10 and min_val != nan_val:
+                    n2index[k] = 10 - n2index[k]/(nan_val+1e-10)*10
+                else:
+                    n2index[k] = 0
             # print("after=",n2index)
             for obj in case_obj_list:
                 t = float(obj.res[col])

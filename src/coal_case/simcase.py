@@ -24,7 +24,7 @@ target_case_fixed = {
     "GZMCD":("220",2), #工作面长度 11
 
     "MCBZ":("无爆炸倾向",1), # 煤尘爆炸倾向 12
-    "MKJB":("3",1), #煤矿级别 国有煤矿等 14
+    "MKJB":("3",1), #煤矿级 别 国有煤矿等 14
     "KJKCFS":("综合开拓",1), #矿井开采方式 13
 
 
@@ -297,7 +297,7 @@ def SimKJTFFS(sim_item):
 
 def calculate_sim(doc, target_case_fixed, target_case_monitor=None):
     fixed_use_list = ['MKJB','KJWSDJ','KJKCFS','KJTFFS','GZMLX',\
-                        'MCHD','PJQJ','MCZRQX','MCBZ','SJSCNL2']
+                        'MCHD','PJQJ','MCZRQX','MCBZ','SJSCNL2','ZXCD','GZMCD','TQXXS','JFXXS']
     sim_item_list = []
     for t in fixed_use_list:
         tar_val, r = target_case_fixed[t]
