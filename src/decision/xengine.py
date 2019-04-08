@@ -22,23 +22,7 @@ class TriggerEngine(KnowledgeEngine):
     def init_data(self, _init_timestamp):
         # 初始化传感器事实
         self.__declare_monitor_fact(_init_timestamp)
-        # 设定初始状态为正常
-        self.__declare_modify_status_fact(status_id='normal')
-    
-    def __declare_modify_status_fact(self, status_id='normal'):
-        assert status_id in XSTATUS_DEFINE
-        temp_status = XSTATUS_DEFINE[status_id]
-        if self.cur_status_fact is None:
-            # declare 
-            temp_fact = XStatusFact(sid=temp_status['sid'], descrip=temp_status['descrip'])
-            self.cur_status_fact = self.declare(temp_fact)
-            print('declare status to %s' % temp_status)
-        else:
-            # modify
-            self.cur_status_fact = self.modify(self.cur_status_fact, sid=temp_status['sid'], descrip=temp_status['descrip'])
-            print('modify status to %s' % temp_status)
-
-        return self.cur_status_fact
+        
 
     def __declare_monitor_fact(self, _init_timestamp):
         """

@@ -151,6 +151,7 @@ meta_KJWSDJ = {
     3:"瓦斯突出矿井"
 }
 
+
 class CaseSaver(object):
     def __init__(self):
         pass
@@ -230,7 +231,7 @@ class CaseSaver(object):
             'ZQXDWSYCL':raw['ZQXDWSYCL'],
             'ZQJDWSYCL':raw['ZQJDWSYCL'],
             'XSGFFCS':raw['SGFFCSYW'],
-            "TITLE":str(raw['SGSJ'])+str(raw['SGDD'])+str(raw['SGLX']),
+            "TITLE":str(raw['SGSJ'])[:-8]+str(raw['SGDD'])+str(raw['SGLX']),
         }
 
         doc['CONTENT'] = " \n ".join([str(i) for i in list(raw.values())])

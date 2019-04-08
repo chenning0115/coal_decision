@@ -41,7 +41,7 @@ class CaseObj(object):
     def get_grads(self):
         match_grad = self.match_grad if self.match_grad else 0
         sim_grad = self.sim_grad if self.sim_grad else 0
-        text = "搜索指数:%s,匹配指数%s,综合指数:%s" % tuple(["<hltext>%.2f</hltext>" %  s for s in [match_grad,sim_grad,self.grad]])
+        text = "搜索指数:%s,相似指数%s,综合指数:%s" % tuple(["<hltext>%.2f</hltext>" %  s for s in [match_grad,sim_grad,self.grad]])
         # print(text)
         return text
 
