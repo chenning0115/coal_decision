@@ -3,6 +3,9 @@ sys.path.append(os.path.join(os.path.dirname(__file__) ,'.'))
 from decision.gas_analysis import GasAnalysisEventType, SuggenstionType
 from launch import time_delta
 
+
+
+
 def aggregate_event(gas_analysis_obj):
     # 渲染gas_analysis_obj event
     res = {}
@@ -61,6 +64,14 @@ def aggregate_event(gas_analysis_obj):
         temp_content += '<li>%s</li>' % item
     temp_content += "</ul>"
     res['summery_content'] = "<h5> <p class='text-%s'>  %s </p> </h5>" % (color_type,temp_content)
+
+
+    res['monitor_labels'] = gas_analysis_event.get_data()
+    res.update(gas_analysis_event.get_center_zoom())
+
+    res['area'] = gas_analysis_event.get_area()
+
+    # print(res['monitor_labels'])
     return res
 
 

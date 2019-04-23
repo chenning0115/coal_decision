@@ -24,6 +24,9 @@ class GasMonitorStatus(object):
 
         self.pred_over_limit_index = 0
 
+    def get_lonlat(self):
+        return self.monitor['POS']['LON_LAT']
+
     def trans_status_type(self):
         if self.status_type == "normal":
             return "正常"
@@ -36,6 +39,9 @@ class GasMonitorStatus(object):
     
     def get_monitor_value(self):
         return self.activate_facts[0].get('val')
+
+    def get_location(self):
+        return self.monitor['POS']['TEXT']
 
     def trans_for_log(self):
         title = "%s工作面%s状态[%s]" % (self.monitor['POS']['WF'], self.monitor['NAME'], 
@@ -57,6 +63,7 @@ class AnalysisEngine(KnowledgeEngine):
         self.reset()
         self.pred_over_limit_list = []
         self.over_limit_list = []
+        self.normal_list = []
 
         cur_timestamp_list = []
         for sid, status_obj in _monitor_status_dict.items():
@@ -64,6 +71,8 @@ class AnalysisEngine(KnowledgeEngine):
                 self.pred_over_limit_list.append(status_obj)
             elif status_obj.status_type == 'over_limit':
                 self.over_limit_list.append(status_obj)
+            else:
+                self.normal_list.append(status_obj)
             cur_timestamp_list.append(status_obj.timestamp)
         self.timestamp = max(cur_timestamp_list)
 
@@ -105,6 +114,7 @@ class AnalysisEngine(KnowledgeEngine):
         gas_event.content = self.__get_content()
         gas_event.over_limit_list = self.over_limit_list[:]
         gas_event.pred_over_limit_list = self.pred_over_limit_list[:]
+        gas_event.normal_list = self.normal_list[:]
         self.analysis_event = gas_event   #update gas_event
 
 
@@ -125,7 +135,7 @@ class AnalysisEngine(KnowledgeEngine):
         print('activate gas over...')
         self.update_analysis_event(GasAnalysisEventType.OVER_LEVEL_2, timestamp)
 
-    # 瓦斯预警状态
+    # 判定工作面预警状态
     @Rule(
         AS.over_num_fact << XABNORMALMonitorNum(
             abnormal_type=MATCH.abnormal_type1, 
@@ -194,6 +204,7 @@ class GasAnalysisEvent(object):
         self.event_type = None
         self.title = None
         self.content = None
+        self.normal_list = []
         self.over_limit_list = []
         self.pred_over_limit_list = []
 
@@ -205,6 +216,76 @@ class GasAnalysisEvent(object):
         return self.content
    
 
+
+    def get_center_zoom(self):
+        center = [106213.5183083,69317.10151376]
+        zoom = 5
+        over_list = self.pred_over_limit_list[:] + self.over_limit_list[:]
+        if len(over_list) == 0:
+            center = [106213.5183083,69317.10151376]
+            zoom = 5
+        else:
+            xlist = [x.get_lonlat()[1] for x in over_list]
+            ylist = [x.get_lonlat()[0] for x in over_list]
+            cx = sum(xlist) / len(over_list)
+            cy = sum(ylist) / len(over_list)
+            xmin,xmax,ymin,ymax = min(xlist),max(xlist),min(ylist),max(ylist)
+            ll = ((xmax-xmin)**2 + (ymax-ymin)**2)**0.5
+            if ll < 3:
+                zoom = 13
+            elif ll < 10:
+                zoom = 11
+            else:
+                zoom = 5
+            center = [cx, cy]
+        res = {
+            "center":center,
+            "zoom":zoom
+        }
+        return res
+
+    def get_data(self):
+        res = []
+        def get_item(status_obj):
+            temp = {
+                "ID": status_obj.monitor_id,
+                "Data": status_obj.get_monitor_value(),
+                "X": status_obj.get_lonlat()[1],
+                "Y": status_obj.get_lonlat()[0],
+                "Status":status_obj.status_type,
+                "text":"<table class='table'> \
+                            <tr class='active'> \
+                                <td> 时间 </td> \
+                                <td> %s </td> \
+                            </tr> \
+                            <tr class='active'> \
+                                <td> ID </td> \
+                                <td> %s </td> \
+                            </tr> \
+                            <tr class='active'> \
+                                <td> 位置 </td> \
+                                <td> %s </td> \
+                            </tr> \
+                            <tr class='active'> \
+                                <td> 浓度 </td> \
+                                <td> %s </td> \
+                            </tr> \
+                            <tr class='active'> \
+                                <td> 状态 </td> \
+                                <td> <h4>%s</h4> </td> \
+                            </tr> \
+                        </table>" % (self.timestamp, status_obj.monitor_id,status_obj.get_location(),status_obj.get_monitor_value(),status_obj.trans_status_type())
+            }
+            return temp
+        for item in self.normal_list + self.pred_over_limit_list + self.over_limit_list:
+            res.append(get_item(item))
+        return res
+
+    def get_area(self):
+        if len(self.over_limit_list) > 0:
+            return [[68596.008,105991.888],[68596.008,106214.702],[70076.661,106214.702],[70085.216,105989.797]]
+        else:
+            return []
 
 
 class SuggenstionType(object):

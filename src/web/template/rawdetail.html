@@ -11,11 +11,24 @@
   <link rel="icon" href="../../favicon.ico">
 
   <title>LRSearch</title>
-
+  <script type="text/javascript" src="http://162.105.17.49:8400/api/?orgin=162.105.17.49:8400"></script>
   <link href="static/css/bootstrap.min.css" rel="stylesheet">
   <script src="static/js/jquery-3.2.1.min.js"></script>
   <script src="static/js/bootstrap.min.js"></script>
   <script src="static/js/echarts.min.js"></script>
+  <link rel="stylesheet" href="static/css/bglky_timeline.css">
+  <style>
+    .demo-container {
+      width: 95%;
+      max-width: 1100px;
+      margin: 50px auto;
+    }
+  
+    .cpr {
+      font-family: Helvetica, Tahoma, Arial, STXihei, “华文细黑”, “Microsoft YaHei”, “微软雅黑”, SimSun, “宋体”, Heiti, “黑体”, sans-serif;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
 
@@ -44,12 +57,23 @@
             <a href="#contact">Contact</a>
           </li>
           <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Tools
               <span class="caret"></span>
             </a>
             <ul class="dropdown-menu">
               <li>
-                <a href="#">Action</a>
+                <div class="checkbox">
+                  <label>
+                    <input id="check_link_map" type="checkbox" checked=True> LinkMap
+                  </label>
+                </div>
+              </li>
+              <li>
+                <div class="checkbox">
+                  <label>
+                    <input id="check_polygon" type="checkbox" checked=True> PolygonTwinkle
+                  </label>
+                </div>
               </li>
             </ul>
           </li>
@@ -63,14 +87,21 @@
 
     <!-- Main jumbotron for a primary marketing message or call to action -->
     <div class="jumbotron">
-      <h1>LRGIS地图</h1>
-      <p>This is a template showcasing the optional theme stylesheet included in Bootstrap. Use it as a starting point to create
-        something more unique by building on or modifying it.This is a template showcasing the optional theme stylesheet included in Bootstrap. Use it as a starting point to create something
-        more unique by building on or modifying it.This is a template showcasing the optional theme stylesheet included in Bootstrap. Use it as a starting point to create something
-        more unique by building on or modifying it.This is a template showcasing the optional theme stylesheet included in Bootstrap. Use it as a starting point to create something
-        more unique by building on or modifying it.This is a template showcasing the optional theme stylesheet included in Bootstrap. Use it as a starting point to create something
-        more unique by building on or modifying it.</p>
+      
+      <div class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-4"><h3>瓦斯预警与应急决策支持系统</h3></div>
+        <div class="col-md-4"></div>
+      </div>
+      
+      <div id="map" style="width: 1000px;height:800px;"></div>
+      <!-- <input type="button" id="button" onClick="getLayers()" value="获取所有图层" /> -->
+
     </div>
+    
+    <div id="plane" style="position:absolute;left:0px;bottom:0px;width:50%;height:30%">
+    </div>
+
 
     <div class="row">
       <div id="main" style="width: 1200px;height:400px;"></div>
@@ -135,7 +166,6 @@
 
     </div>
 
-  </div>
   
 
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -211,26 +241,18 @@
       },
       toolbox: {
       },
-      visualMap: {
-        top: 10,
-        right: 10,
-        pieces: [{
-          gt: 0,
-          lte: 0.1,
-          color: '#096'
-        }, {
-          gt: 0.1,
-          lte: 3.0,
-          color: '#ffde33'
-        }],
-        outOfRange: {
-          color: '#999'
-        }
-      },
       series: [{
-        name: '044A02',
+        name: '044A02预测',
         type: 'line',
-        data: data['044A02'],
+        smooth: true,
+        data: data['next_044A02'],
+        lineStyle: {
+          normal: {
+            color: 'green',
+            width: 2,
+            type: 'dashed'
+          }
+        },
         markLine: {
           silent: true,
           data: [{
@@ -241,29 +263,108 @@
         }
       },
       {
-          name: '044A03',
+          name: '044A02',
           type: 'line',
-          data: data['044A03'],
+          smooth: true,
+          data: data['last_044A02'],
+          lineStyle: {
+          normal: {
+            color: 'green',
+            width: 2,
+          }
+        },
       },
+      
       {
+          name: '009A13预测',
+          type: 'line',
+          smooth: true,
+          data: data['next_009A13'],
+          lineStyle: {
+            normal: {
+              color: 'red',
+              width: 2,
+              type: 'dashed'
+            }
+          }
+        },
+        {
           name: '009A13',
           type: 'line',
-          data: data['009A13'],
+          smooth: true,
+          data: data['last_009A13'],
+          lineStyle: {
+            normal: {
+              color: 'red',
+              width: 2,
+            }
+          }
+        },
+
+
+      {
+          name: '044A03',
+          type: 'line',
+          smooth: true,
+          data: data['next_044A03'],
+          lineStyle: {
+          normal: {
+            color: 'black',
+            width: 2,
+            type: 'dashed'
+          }
+        }
       },
+      {
+          name: '044A03',
+          type: 'line',
+          smooth: true,
+          data: data['last_044A03'],
+          lineStyle: {
+          normal: {
+            color: 'black',
+            width: 2,
+          }
+        }
+      },
+
+
       {
           name: '044A11',
           type: 'line',
-          data: data['044A11'],
-      },
+          smooth: true,
+          data: data['next_044A11'],
+          lineStyle: {
+            normal: {
+              color: 'blue',
+              width: 2,
+              type: 'dashed'
+            }
+          }
+        },
+        {
+          name: '044A11',
+          type: 'line',
+          smooth: true,
+          data: data['last_044A11'],
+          lineStyle: {
+            normal: {
+              color: 'blue',
+              width: 2,
+            }
+          }
+        },
         ]
     });
   }
+
+
   function draw_gas_line_chart_timeinter() {
     $.get('/get_gas_monitor_data', draw_gas_line_chart)
   }
   // setInterval("draw_gas_line_chart_timeinter()", "1000");
 
-    function generate_gas_event(data) {
+    function show_gas_event(data) {
       data = eval("(" + data + ")")
       if(data['update']==true){
           // alert(data)
@@ -284,14 +385,7 @@
       }
     }
 
-     function generate_gas_event_timeinter() {
-        
-        $.get('/get_gas_analysis_event', generate_gas_event)
-        $.get('/get_gas_monitor_data', draw_gas_line_chart)
-        $.get('/get_gas_suggestion', get_gas_suggestion)
-      }
-
-    setInterval("generate_gas_event_timeinter()", "200");
+     
 
     function suggest_func() {
       base_url = '/suggest_event?sug_id='
@@ -325,6 +419,181 @@
       window.location.href = url;
     })
   </script>
+
+
+<script>
+  function show_specific_layer(map) {
+    hidden_layers = ['0', '2019年2月巷道SJZ1500CCJ', '坡度SJZ1500CCJ', '导线点SJZ1500CCJ', '构造名称SJZ1500CCJ', '钻孔SJZ1500CCJ', '钻孔名称SJZ1500CCJ', '钻孔高程SJZ1500CCJ', '钻孔底板高程SJZ1500CCJ', '钻孔真厚SJZ1500CCJ', '钻孔煤厚含SJZ1500CCJ', '煤层分叉合并SJZ1500CCJ', '等值线注记SJZ1500CCJ', '等高线SJZ1500CCJ', '计曲线SJZ1500CCJ', '主要大巷注记SJZ1500CCJ', '次要巷道注记SJZ1500CCJ', '变坡点SJZ1500CCJ', '井筒SJZ1500CCJ', '测点SJZ1500CCJ', '测点底板高程SJZ1500CCJ', '实测断层SJZ1500CCJ', '推断断层SJZ1500CCJ', '实测陷落柱SJZ1500CCJ', '推断陷落柱SJZ1500CCJ', '月末工作线SJZ1500CCJ', '月回采注记SJZ1500CCJ', '工作面编号SJZ1500CCJ', '回采方式SJZ1500CCJ', '回采年度SJZ1500CCJ', '小柱状SJZ1500CCJ', '探放水孔SJZ1500CCJ', '图形修饰SJZ1500CCJ', '示意图SJZ1500CCJ', '综合柱状图SJZ1500CCJ', '重合煤岩巷SJZ1500CCJ', '淋水点SJZ1500CCJ', '避难硐SJZ1500CCJ', '水泵SJZ1500CCJ', '吸水井SJZ1500CCJ', '中央盘区北和北一盘区二次解释SJZ1500CCJ', '中央盘区三维地震2012SJZ1500CCJ', '北一盘区三维地震2014SJZ1500CCJ', '南一盘区三维地震2008SJZ1500CCJ', '二次解释中央SJZ1500CCJ', '电力线SJZ1500CCJ', '井田边界SJZ1500CCJ', '积水区SJZ1500CCJ', '防水危险警戒线SJZ1500CCJ', '探水线SJZ1500CCJ', '突出点SJZ1500CCJ', '保护煤柱SJZ1500CCJ', '村庄SJZ1500CCJ', '铁路SJZ1500CCJ', '小煤矿SJZ1500CCJ', '黄岩汇煤矿SJZ1500CCJ', '管线SJZ1500CCJ', '向背斜SJZ1500CCJ', '新构造SJZ1500CCJ', '槽波解释构造SJZ1500CCJ', '水仓SJZ1500CCJ', '进回风箭头SJZ1500CCJ', '水源保护', '岩巷SJZ1500CCJ', '煤巷SJZ1500CCJ', '河流SJZ1500CCJ', '区域颜色SJZ1500CCJ', '坪上煤矿SJZ1500CCJ', '居民地SJZ1500CCJ', '经纬网SJZ1500CCJ', '2017年9月SJZ1500CCJ', '风桥SJZ1500CCJ', '2019年1月SJZ1500CCJ', '54656565556', '2019年3月SJZ1500CCJ', '2019年3月', '坡度']
+    // show_layers = ['工作面编号SJZ1500CCJ', '回采方式SJZ1500CCJ', '图形修饰SJZ1500CCJ', '示意图SJZ1500CCJ', '综合柱状图SJZ1500CCJ', '重合煤岩巷SJZ1500CCJ', '淋水点SJZ1500CCJ', '避难硐SJZ1500CCJ', '水泵SJZ1500CCJ', '吸水井SJZ1500CCJ', '电力线SJZ1500CCJ', '井田边界SJZ1500CCJ', '积水区SJZ1500CCJ', '防水危险警戒线SJZ1500CCJ', '探水线SJZ1500CCJ', '突出点SJZ1500CCJ', '保护煤柱SJZ1500CCJ', '小煤矿SJZ1500CCJ', '黄岩汇煤矿SJZ1500CCJ', '管线SJZ1500CCJ', '向背斜SJZ1500CCJ', '新构造SJZ1500CCJ', '槽波解释构造SJZ1500CCJ', '水仓SJZ1500CCJ', '进回风箭头SJZ1500CCJ', '水源保护', '岩巷SJZ1500CCJ', '煤巷SJZ1500CCJ', '河流SJZ1500CCJ', '区域颜色SJZ1500CCJ', '坪上煤矿SJZ1500CCJ', '居民地SJZ1500CCJ', '2017年9月SJZ1500CCJ', '风桥SJZ1500CCJ', '2019年1月SJZ1500CCJ', '54656565556', '2019年3月SJZ1500CCJ', '2019年3月']
+     show_layers = ['工作面编号SJZ1500CCJ', '回采方式SJZ1500CCJ', '图形修饰SJZ1500CCJ', '示意图SJZ1500CCJ', '重合煤岩巷SJZ1500CCJ', '避难硐SJZ1500CCJ', '水泵SJZ1500CCJ', '吸水井SJZ1500CCJ', '井田边界SJZ1500CCJ', '积水区SJZ1500CCJ', '防水危险警戒线SJZ1500CCJ',  '突出点SJZ1500CCJ','小煤矿SJZ1500CCJ' ,'岩巷SJZ1500CCJ', '煤巷SJZ1500CCJ', '区域颜色SJZ1500CCJ', '坪上煤矿SJZ1500CCJ', '2017年9月SJZ1500CCJ', '风桥SJZ1500CCJ', '2019年1月SJZ1500CCJ', '54656565556', '2019年3月SJZ1500CCJ', '2019年3月']
+    map.hideLrLayers(hidden_layers, function (data) {
+      map.refresh(); // 刷新图
+    });
+    map.showLrLayers(show_layers, function (data) {
+      map.refresh(); // 刷新图
+    });
+  }
+
+  function getLayers() {
+      map.getLrLayers(function (jsonstr) {
+        var data = jsonstr;
+        var len = data.result.layers.length;
+        var lyritems = '';
+        for (var i = 0; i < len; i++) {
+
+          lyritems += '<li>' + data.result.layers[i].name;
+          if (data.result.layers[i].visible == '1')
+            lyritems += '[' + '打开状态' + ']</li>';
+          else
+            lyritems += '[' + '关闭状态' + ']</li>';
+        }
+        // alert(lyritems)
+        $('#plane').html(lyritems);
+      });
+    }
+</script>
+
+<script>
+  var markers_cluster = new L.MarkerClusterGroup();
+  var polygon = null;
+  var Icon_normal = L.icon({
+      iconUrl: 'icon/marker_b.png',
+      iconSize: [20, 40],
+      iconAnchor: [22, 94],
+      popupAnchor: [-3, -76],
+      shadowUrl: 'my-icon-shadow.png',
+      shadowSize: [68, 95],
+      shadowAnchor: [22, 94]
+    });
+    var Icon_pred = L.icon({
+        iconUrl: 'icon/marker_r.png',
+        iconSize: [20, 40],
+        iconAnchor: [22, 94],
+        popupAnchor: [-3, -76],
+        shadowUrl: 'my-icon-shadow.png',
+        shadowSize: [68, 95],
+        shadowAnchor: [22, 94]
+      });
+    var Icon_over = L.icon({
+        iconUrl: 'icon/alarm.gif',
+        iconSize: [20, 40],
+        iconAnchor: [22, 94],
+        popupAnchor: [-3, -76],
+        shadowUrl: 'my-icon-shadow.png',
+        shadowSize: [68, 95],
+        shadowAnchor: [22, 94]
+      });
+
+
+    
+
+  function clear_marker(map) {
+    if (markers_cluster) {
+      map.removeLayer(markers_cluster);
+    }
+  }
+
+  function show_map_monitor_value(event, map) {
+    check = document.getElementById("check_link_map").checked
+    if(check){
+      center = event['center']
+      zoom = event['zoom']
+      map.setCenterXY(new LPoint(center[0], center[1]), zoom);
+    }
+
+
+    data = event['monitor_labels']
+    clear_marker(map);
+    markers_cluster = new L.MarkerClusterGroup().addTo(map);
+    var data_u = []; //处理非空数据，非空数据在图上不显示出来
+    for (var i = 0; i < data.length; i++) {
+      if (data[i].X != "" && data[i].Y != "") {
+        data_u.push(data[i]);
+      }
+    }
+    //聚类显示控制器
+    for (var i = 0; i < data_u.length; i++) {
+      var latlng = map.options.crs.projection.unproject(L.point(data_u[i].X, data_u[i].Y));
+      // var latlng = L.point(data_u[i].X, data_u[i].Y);
+      var id = data_u[i].ID;  
+      var label = data_u[i].Status
+      var status_icon = Icon_normal
+      if(label=="normal"){
+        status_icon = Icon_normal
+      }else if(label=="pred_over_limit"){
+        status_icon = Icon_pred
+      }else if(label=="over_limit"){
+        status_icon = Icon_over
+      }
+      var markers = L.marker(L.latLng(latlng), { icon: status_icon });
+      markers.bindPopup(data_u[i].text+"</br>");
+      markers._id = data_u[i].ID;
+      markers_cluster.addLayer(markers);
+
+      
+    }
+  
+  if(document.getElementById("check_polygon").checked){
+    if(polygon){
+      map.removeLayer(polygon);
+    }
+    polygon = new LPolygon(event['area']).addTo(map);
+    polygon.setFillTwinkle(500, "yellow", "red");
+  }else{
+    if (polygon) {
+      map.removeLayer(polygon);
+    }
+  }
+  
+}
+</script>
+
+
+<script>
+  var center_x = 106213.5183083
+  var center_y = 69317.10151376
+  var zoom = 6
+  //实例化地图
+  var map = new LOneMap('map', {
+    boxzoom: true,
+    zoomControl: true //默认显示控制器按钮
+  });
+  map.setCenterXY(new LPoint(center_x, center_y), zoom);
+
+
+  map.on('mousemove', function (e) {
+    if (!map.statusBar) {
+      map.statusBar = new L.Control.StatusBar().addTo(map);
+    }
+    var pt = map.options.crs.project(e.latlng);
+    map.statusBar.updateXY(e.latlng.lng, e.latlng.lat, pt.x, pt.y, map.getZoom());//显示参数包括经纬度，大地坐标，缩放级别	
+  });
+  show_specific_layer(map)
+
+
+</script>
+
+
+
+
+
+  <script>  
+  function generate_gas_event(gas_event) {
+    show_gas_event(gas_event)
+    gas_event = eval("(" + gas_event+ ")")
+    show_map_monitor_value(gas_event, map)
+  }
+
+  function generate_gas_event_timeinter() {
+
+    $.get('/get_gas_analysis_event', generate_gas_event)
+    $.get('/get_gas_monitor_data', draw_gas_line_chart)
+    $.get('/get_gas_suggestion', get_gas_suggestion)
+  }
+
+  setInterval("generate_gas_event_timeinter()", "2000");
+  </script>
+
 </body>
 
 </html>

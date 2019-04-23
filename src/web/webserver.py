@@ -1,5 +1,6 @@
 import tornado.ioloop
 import tornado.web
+from tornado.web import StaticFileHandler
 
 import os
 import sys
@@ -27,7 +28,7 @@ class RawDetailHanlder(tornado.web.RequestHandler):
 class GetGasMonitorDataHandler(tornado.web.RequestHandler):
     def get(self):
         update, cur_index, cur_time = get_cur_time()
-        last_window = 30
+        last_window = 10
         next_window = 5
         res = {
                 'cur_date':cur_time.strftime("%Y-%m-%d %H:%M:%S")
@@ -40,7 +41,9 @@ class GetGasMonitorDataHandler(tornado.web.RequestHandler):
             res['dates'] = dates
             for mid in gas_mids:
                 mid_data = fmd.get_monitor_data_by_id_and_time(mid, cur_index, last_window, next_window)
-                res[mid] = mid_data
+                res[mid] = [[i,j] for i,j in zip(dates,mid_data)]
+                res['last_%s' % mid] = [[i,j] for i,j in zip(dates[:last_window+1],mid_data[:last_window+1])]
+                res['next_%s' % mid] = [[i,j] for i,j in zip(dates[last_window:],mid_data[last_window:])]
             ss =  json.dumps(res)
             self.write(ss)
         else:
@@ -177,6 +180,9 @@ settings = {
 "static_path": os.path.join(os.path.dirname(__file__), "static") 
 }
 
+
+
+current_path = os.path.dirname(__file__)
 application = tornado.web.Application([
         (r"/home",RawDetailHanlder),
         (r"/get_gas_monitor_data",GetGasMonitorDataHandler),
@@ -190,6 +196,8 @@ application = tornado.web.Application([
         (r"/elec_sure", ElecSureHandler),
         (r"/timeline", TimelineHandler),
         (r"/timeline_data", TimelineDataHandler),
+        (r'^/icon/(.*)$', StaticFileHandler, {"path":os.path.join(current_path, "static/icon")}),
+        
     ],**settings)
 
 
