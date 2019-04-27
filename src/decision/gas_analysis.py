@@ -7,7 +7,7 @@ from monitor import monitor_define
 from pyknow import *
 from xfacts import *
 
-from xlog.xlog import xlogger,LogLevel
+from xlog.xlog import xlogger,LogLevel,LogType
 
 class GasMonitorStatus(object):
     def __init__(self, _monitor_id):
@@ -232,11 +232,12 @@ class GasAnalysisEvent(object):
             xmin,xmax,ymin,ymax = min(xlist),max(xlist),min(ylist),max(ylist)
             ll = ((xmax-xmin)**2 + (ymax-ymin)**2)**0.5
             if ll < 3:
-                zoom = 13
-            elif ll < 10:
-                zoom = 11
+                zoom = 10
+            elif ll < 100:
+                zoom = 10
             else:
-                zoom = 5
+                zoom = 6
+            print("ll=%s,zoom=%s" % (ll, zoom))
             center = [cx, cy]
         res = {
             "center":center,
@@ -437,7 +438,7 @@ class SuggestEngine(KnowledgeEngine):
         simple_sug_obj.activate_title = "启动应急处置"
         def execute_func(sug_obj, gas_analysis_obj, xlogger,timestamp, *args, **kwargs):
             gas_analysis_obj.set_global_status('global_status_period','on_urgent')
-            xlogger.append_log(timestamp, '启动应急处置','系统开始进入应急状态...')
+            xlogger.append_log(timestamp, '启动应急处置','系统开始进入应急状态...',log_type=LogType.LOGTYPE_ACTION)
             print(sug_obj.suggestion_id)
         simple_sug_obj.execute_func = execute_func
         id2suggestion[my_sug_id_0] = simple_sug_obj
@@ -470,7 +471,7 @@ class SuggestEngine(KnowledgeEngine):
         simple_sug_obj.activate_title = "恢复正常监测状态"
         def execute_func(sug_obj, gas_analysis_obj,xlogger,timestamp, *args, **kwargs):
             gas_analysis_obj.set_global_status('global_status_period','normal')
-            xlogger.append_log(timestamp, '确认恢复正常状态','系统开始恢复到正常监测状态...')
+            xlogger.append_log(timestamp, '确认恢复正常状态','系统开始恢复到正常监测状态...',log_type=LogType.LOGTYPE_ACTION)
             # print(sug_obj.suggestion_id)
         simple_sug_obj.execute_func = execute_func
         id2suggestion[my_sug_id_0] = simple_sug_obj
@@ -562,7 +563,7 @@ class GasAnalysis(object):
                 #如果发生了变化，则需要记录内容
                 cur_time = status_obj.timestamp
                 title, content = status_obj.trans_for_log()
-                xlogger.append_log(status_obj.timestamp,title, content,log_level=LogLevel.WARNING)
+                xlogger.append_log(status_obj.timestamp,title, content,log_level=LogLevel.WARNING,log_type=LogType.LOGTYPE_MONITOR)
                 # xlogger.print_log()
 
     
@@ -578,9 +579,9 @@ class GasAnalysis(object):
         if not self.last_result_event or self.last_result_event.event_type!=self.result_event.event_type:
             if self.last_result_event:
                 cur_time = self.result_event.timestamp
-                title = "综合分析:[%s],之前状态为[%s]" % (self.result_event.get_title(), self.last_result_event.get_title())
+                title = "[%s] => [%s]" % (self.last_result_event.get_title(),self.result_event.get_title())
                 content = " ".join(self.result_event.get_detail())
-                xlogger.append_log(cur_time, title, content,log_level=LogLevel.DANEGR)
+                xlogger.append_log(cur_time, title, content,log_level=LogLevel.DANEGR,log_type=LogType.LOGTYPE_ANALYSIS)
             self.last_result_event = self.result_event 
             # xlogger.print_log()
 

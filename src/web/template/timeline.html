@@ -41,7 +41,7 @@
 function render_timeline(data) {
     data = eval("(" + data + ")")
     res = ""
-    for(var i=0;i<data.length;i++){
+    for(var i= data.length-1;i>=0;i--){
         item = data[i];
         res = res + 
         "<li> \
@@ -49,6 +49,7 @@ function render_timeline(data) {
             <div class='zbg-tl-time'> \
                 <span>"+item['date']+"</span> \
                 <span>"+item['time']+"</span> \
+                <span><h4>"+item['type'] +"</h4></span> \
             </div> \
             <div class='zbg-tl-content'> \
                 <h3>"+item['title']+"</h3> \

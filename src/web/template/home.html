@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge"> -->
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>LRSearch</title>
+    <script type="text/javascript" src="http://162.105.17.49:8400/api/?orgin=162.105.17.49:8400"></script>
+    <link href="static/css/bootstrap.min.css" rel="stylesheet">
+    <script src="static/js/jquery-3.2.1.min.js"></script>
+    <script src="static/js/bootstrap.min.js"></script>
+    <script src="static/js/echarts.min.js"></script>
+    <link rel="stylesheet" href="static/css/bglky_timeline.css">
+    <style>
+        .demo-container {
+            width: 95%;
+            max-width: 1100px;
+            margin: 50px auto;
+        }
+
+        .cpr {
+            font-family: Helvetica, Tahoma, Arial, STXihei, “华文细黑”, “Microsoft YaHei”, “微软雅黑”, SimSun, “宋体”, Heiti, “黑体”, sans-serif;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false"
+                    aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="\home">煤矿瓦斯预警与应急决策支持系统</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li class="active">
+                        <a href="#">Home</a>
+                    </li>
+                    <li>
+                        <a href="#about">About</a>
+                    </li>
+                    <li>
+                        <a href="#contact">Contact</a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Tools
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <div class="checkbox">
+                                    <label>
+                                        <input id="check_link_map" type="checkbox" checked=True> LinkMap
+                                    </label>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="checkbox">
+                                    <label>
+                                        <input id="check_polygon" type="checkbox" checked=True> PolygonTwinkle
+                                    </label>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <!--/.nav-collapse -->
+        </div>
+    </nav>
+
+    <div class="container" role="main">
+
+        <!-- Main jumbotron for a primary marketing message or call to action -->
+        <div class="jumbotron">
+
+            <div class="row">
+                <div class="col-md-4"></div>
+                <div class="col-md-4">
+                    <h3>瓦斯预警与应急决策支持系统</h3>
+                </div>
+                <div class="col-md-4"></div>
+            </div>
+
+            <div id="map" style="width: 1000px;height:800px;"></div>
+            <!-- <input type="button" id="button" onClick="getLayers()" value="获取所有图层" /> -->
+
+        </div>
+
+        <div id="plane" style="position:absolute;left:0px;bottom:0px;width:50%;height:30%">
+        </div>
+
+
+        <div class="row">
+            <div id="main" style="width: 1200px;height:400px;"></div>
+        </div>
+
+        <!-- 异常与异常分析部分 -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">当前监测异常状况:
+                            <span id='timestamp_0'></span>
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                        <div id="gas_event"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- <div class="col-md-2 ">
+        <img src="static/images/right.jpeg" width="150" height="150" class="img-circle">
+      </div> -->
+
+            <div class="col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">依据异常状况综合分析结果:
+                            <span id='timestamp_1'></span>
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div id="gas_summery_event">
+                                    <div id="gas_summery_title"></div>
+                                    <div id="gas_summery_content"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <h3>
+                                    <button id="case_search" type="button" class="btn btn-danger">进行案例检索</button>
+                                </h3>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 开始建议部分 -->
+        <div class="row">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">当前决策建议:</h3>
+                    <!-- <button id='suggest_click' class='btn btn-success' type='button'>hahaha</button> -->
+                </div>
+                <div class="panel-body">
+                    <div id="gas_suggestion">
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 id="alert_sug_title" class="modal-title" id="myModalLabel">正在执行决策...</h4>
+                    </div>
+                    <div class="modal-body">
+                        <img alt="" width="150" height="100" class="img-circle" src="static/images/loading.jpg" />
+                        <span id="alert_sug_content"> </span>
+                    </div>
+                    <div class="modal-footer">
+                        <!-- <button type="button" class="btn btn-primary" data-dismiss="modal">确认</button> -->
+                        <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="container" role="main">
+            <footer class="blog-footer">
+                <p>北京大学智慧能源与工程中心
+                    <a href="http://www.pku.edu.cn">北京大学</a> by
+                    <a href="https://www.github.com/chenning0115">@charnix</a>.</p>
+                <p>
+                    <a href="#">Back to top</a>
+                </p>
+            </footer>
+        </div>
+
+
+        <script type="text/javascript">
+
+            function hideModal() {
+                $('#myModal').modal('hide');
+            }
+
+            function showModal() {
+                $('#myModal').modal({ backdrop: 'static', keyboard: false });
+            }
+
+
+            // echarts
+            function draw_gas_line_chart(data) {
+                data = eval("(" + data + ")")
+                var myChart = echarts.init(document.getElementById('main'));
+                myChart.setOption(option = {
+                    title: {
+                        text: '实时瓦斯监测与预测',
+                        subtext: '当前工作面 - W15117',
+                        x: 'center',
+                        align: 'right'
+                    },
+                    tooltip: {
+                        trigger: 'axis'
+                    },
+                    legend: {
+                        data: data['mids'],
+                        x: 'left',
+                    },
+                    xAxis: {
+                        data: data['dates']
+                    },
+                    yAxis: {
+                        splitLine: {
+                            show: false
+                        }
+                    },
+                    toolbox: {
+                    },
+                    series: [{
+                        name: '044A02预测',
+                        type: 'line',
+                        smooth: true,
+                        data: data['next_044A02'],
+                        lineStyle: {
+                            normal: {
+                                color: 'green',
+                                width: 2,
+                                type: 'dashed'
+                            }
+                        },
+                        markLine: {
+                            silent: true,
+                            data: [{
+                                yAxis: 0.1
+                            }, {
+                                xAxis: data['cur_date']
+                            },]
+                        }
+                    },
+                    {
+                        name: '044A02',
+                        type: 'line',
+                        smooth: true,
+                        data: data['last_044A02'],
+                        lineStyle: {
+                            normal: {
+                                color: 'green',
+                                width: 2,
+                            }
+                        },
+                    },
+
+                    {
+                        name: '009A13预测',
+                        type: 'line',
+                        smooth: true,
+                        data: data['next_009A13'],
+                        lineStyle: {
+                            normal: {
+                                color: 'red',
+                                width: 2,
+                                type: 'dashed'
+                            }
+                        }
+                    },
+                    {
+                        name: '009A13',
+                        type: 'line',
+                        smooth: true,
+                        data: data['last_009A13'],
+                        lineStyle: {
+                            normal: {
+                                color: 'red',
+                                width: 2,
+                            }
+                        }
+                    },
+
+
+                    {
+                        name: '044A03',
+                        type: 'line',
+                        smooth: true,
+                        data: data['next_044A03'],
+                        lineStyle: {
+                            normal: {
+                                color: 'black',
+                                width: 2,
+                                type: 'dashed'
+                            }
+                        }
+                    },
+                    {
+                        name: '044A03',
+                        type: 'line',
+                        smooth: true,
+                        data: data['last_044A03'],
+                        lineStyle: {
+                            normal: {
+                                color: 'black',
+                                width: 2,
+                            }
+                        }
+                    },
+
+
+                    {
+                        name: '044A11',
+                        type: 'line',
+                        smooth: true,
+                        data: data['next_044A11'],
+                        lineStyle: {
+                            normal: {
+                                color: 'blue',
+                                width: 2,
+                                type: 'dashed'
+                            }
+                        }
+                    },
+                    {
+                        name: '044A11',
+                        type: 'line',
+                        smooth: true,
+                        data: data['last_044A11'],
+                        lineStyle: {
+                            normal: {
+                                color: 'blue',
+                                width: 2,
+                            }
+                        }
+                    },
+                    ]
+                });
+            }
+
+
+            function draw_gas_line_chart_timeinter() {
+                $.get('/get_gas_monitor_data', draw_gas_line_chart)
+            }
+            // setInterval("draw_gas_line_chart_timeinter()", "1000");
+
+            function show_gas_event(data) {
+                data = eval("(" + data + ")")
+                if (data['update'] == true) {
+                    // alert(data)
+                    document.getElementById("gas_event").innerHTML = data['content'];
+                    document.getElementById("gas_summery_title").innerHTML = data['summery_title'];
+                    document.getElementById("gas_summery_content").innerHTML = data['summery_content'];
+                    document.getElementById("timestamp_0").innerHTML = data['timestamp'];
+                    document.getElementById("timestamp_1").innerHTML = data['timestamp'];
+                }
+            }
+
+
+            function get_gas_suggestion(data) {
+                data = eval("(" + data + ")")
+                if (data['update'] == true) {
+                    // alert(data)
+                    document.getElementById("gas_suggestion").innerHTML = data['content'];
+                }
+            }
+
+
+
+            function suggest_func() {
+                base_url = '/suggest_event?sug_id='
+                sug_id = $("#suggest_click").attr("sug_id")
+                url = base_url + sug_id
+                $.ajax({
+                    url: url,
+                    async: true,
+                    type: "GET",
+                    data: {},
+                    beforeSend: function () {
+                        // document.getElementById("alert_sug_title").innerHTML = "" + $("#suggest_click").attr("sug_title");
+                        document.getElementById("alert_sug_content").innerHTML = "正在" + $("#suggest_click").attr("sug_title") + ",请稍等...";
+                        showModal();
+                    },
+                    success: function (data) {
+                        data = eval("(" + data + ")")
+                        operate = data['operate'];
+                        setTimeout(hideModal, 2000)
+                        if (operate == 'redirect') {
+                            window.location.href = data['url'];
+                        }
+                    }
+                });
+
+            }
+
+            $("#case_search").bind("click", function (e) {
+                val = $("#gas_summery_title").text()
+                url = "/case_search?q=" + val
+                window.location.href = url;
+            })
+        </script>
+
+
+        <script>
+            function show_specific_layer(map) {
+                hidden_layers = ['0', '2019年2月巷道SJZ1500CCJ', '坡度SJZ1500CCJ', '导线点SJZ1500CCJ', '构造名称SJZ1500CCJ', '钻孔SJZ1500CCJ', '钻孔名称SJZ1500CCJ', '钻孔高程SJZ1500CCJ', '钻孔底板高程SJZ1500CCJ', '钻孔真厚SJZ1500CCJ', '钻孔煤厚含SJZ1500CCJ', '煤层分叉合并SJZ1500CCJ', '等值线注记SJZ1500CCJ', '等高线SJZ1500CCJ', '计曲线SJZ1500CCJ', '主要大巷注记SJZ1500CCJ', '次要巷道注记SJZ1500CCJ', '变坡点SJZ1500CCJ', '井筒SJZ1500CCJ', '测点SJZ1500CCJ', '测点底板高程SJZ1500CCJ', '实测断层SJZ1500CCJ', '推断断层SJZ1500CCJ', '实测陷落柱SJZ1500CCJ', '推断陷落柱SJZ1500CCJ', '月末工作线SJZ1500CCJ', '月回采注记SJZ1500CCJ', '工作面编号SJZ1500CCJ', '回采方式SJZ1500CCJ', '回采年度SJZ1500CCJ', '小柱状SJZ1500CCJ', '探放水孔SJZ1500CCJ', '图形修饰SJZ1500CCJ', '示意图SJZ1500CCJ', '综合柱状图SJZ1500CCJ', '重合煤岩巷SJZ1500CCJ', '淋水点SJZ1500CCJ', '避难硐SJZ1500CCJ', '水泵SJZ1500CCJ', '吸水井SJZ1500CCJ', '中央盘区北和北一盘区二次解释SJZ1500CCJ', '中央盘区三维地震2012SJZ1500CCJ', '北一盘区三维地震2014SJZ1500CCJ', '南一盘区三维地震2008SJZ1500CCJ', '二次解释中央SJZ1500CCJ', '电力线SJZ1500CCJ', '井田边界SJZ1500CCJ', '积水区SJZ1500CCJ', '防水危险警戒线SJZ1500CCJ', '探水线SJZ1500CCJ', '突出点SJZ1500CCJ', '保护煤柱SJZ1500CCJ', '村庄SJZ1500CCJ', '铁路SJZ1500CCJ', '小煤矿SJZ1500CCJ', '黄岩汇煤矿SJZ1500CCJ', '管线SJZ1500CCJ', '向背斜SJZ1500CCJ', '新构造SJZ1500CCJ', '槽波解释构造SJZ1500CCJ', '水仓SJZ1500CCJ', '进回风箭头SJZ1500CCJ', '水源保护', '岩巷SJZ1500CCJ', '煤巷SJZ1500CCJ', '河流SJZ1500CCJ', '区域颜色SJZ1500CCJ', '坪上煤矿SJZ1500CCJ', '居民地SJZ1500CCJ', '经纬网SJZ1500CCJ', '2017年9月SJZ1500CCJ', '风桥SJZ1500CCJ', '2019年1月SJZ1500CCJ', '54656565556', '2019年3月SJZ1500CCJ', '2019年3月', '坡度']
+                // show_layers = ['工作面编号SJZ1500CCJ', '回采方式SJZ1500CCJ', '图形修饰SJZ1500CCJ', '示意图SJZ1500CCJ', '综合柱状图SJZ1500CCJ', '重合煤岩巷SJZ1500CCJ', '淋水点SJZ1500CCJ', '避难硐SJZ1500CCJ', '水泵SJZ1500CCJ', '吸水井SJZ1500CCJ', '电力线SJZ1500CCJ', '井田边界SJZ1500CCJ', '积水区SJZ1500CCJ', '防水危险警戒线SJZ1500CCJ', '探水线SJZ1500CCJ', '突出点SJZ1500CCJ', '保护煤柱SJZ1500CCJ', '小煤矿SJZ1500CCJ', '黄岩汇煤矿SJZ1500CCJ', '管线SJZ1500CCJ', '向背斜SJZ1500CCJ', '新构造SJZ1500CCJ', '槽波解释构造SJZ1500CCJ', '水仓SJZ1500CCJ', '进回风箭头SJZ1500CCJ', '水源保护', '岩巷SJZ1500CCJ', '煤巷SJZ1500CCJ', '河流SJZ1500CCJ', '区域颜色SJZ1500CCJ', '坪上煤矿SJZ1500CCJ', '居民地SJZ1500CCJ', '2017年9月SJZ1500CCJ', '风桥SJZ1500CCJ', '2019年1月SJZ1500CCJ', '54656565556', '2019年3月SJZ1500CCJ', '2019年3月']
+                show_layers = ['工作面编号SJZ1500CCJ', '回采方式SJZ1500CCJ', '图形修饰SJZ1500CCJ', '示意图SJZ1500CCJ', '重合煤岩巷SJZ1500CCJ', '避难硐SJZ1500CCJ', '水泵SJZ1500CCJ', '吸水井SJZ1500CCJ', '井田边界SJZ1500CCJ', '积水区SJZ1500CCJ', '防水危险警戒线SJZ1500CCJ', '突出点SJZ1500CCJ', '小煤矿SJZ1500CCJ', '岩巷SJZ1500CCJ', '煤巷SJZ1500CCJ', '区域颜色SJZ1500CCJ', '坪上煤矿SJZ1500CCJ', '2017年9月SJZ1500CCJ', '风桥SJZ1500CCJ', '2019年1月SJZ1500CCJ', '54656565556', '2019年3月SJZ1500CCJ', '2019年3月']
+                map.hideLrLayers(hidden_layers, function (data) {
+                    map.refresh(); // 刷新图
+                });
+                map.showLrLayers(show_layers, function (data) {
+                    map.refresh(); // 刷新图
+                });
+            }
+
+            function getLayers() {
+                map.getLrLayers(function (jsonstr) {
+                    var data = jsonstr;
+                    var len = data.result.layers.length;
+                    var lyritems = '';
+                    for (var i = 0; i < len; i++) {
+
+                        lyritems += '<li>' + data.result.layers[i].name;
+                        if (data.result.layers[i].visible == '1')
+                            lyritems += '[' + '打开状态' + ']</li>';
+                        else
+                            lyritems += '[' + '关闭状态' + ']</li>';
+                    }
+                    // alert(lyritems)
+                    $('#plane').html(lyritems);
+                });
+            }
+        </script>
+
+        <script>
+            var markers_cluster = new L.MarkerClusterGroup();
+            var polygon = null;
+            var Icon_normal = L.icon({
+                // iconUrl: 'icon/marker_b.png',
+                iconUrl: 'icon/bj_blue.gif',
+                iconSize: [25, 30],
+                iconAnchor: [22, 94],
+                popupAnchor: [-3, -76],
+                shadowUrl: 'my-icon-shadow.png',
+                shadowSize: [68, 95],
+                shadowAnchor: [22, 94]
+            });
+            var Icon_pred = L.icon({
+                // iconUrl: 'icon/marker_r.png',
+                iconUrl: 'icon/bj_yellow.gif',
+                iconSize: [25, 30],
+                iconAnchor: [22, 94],
+                popupAnchor: [-3, -76],
+                shadowUrl: 'my-icon-shadow.png',
+                shadowSize: [68, 95],
+                shadowAnchor: [22, 94]
+            });
+            var Icon_over = L.icon({
+                // iconUrl: 'icon/alarm.gif',
+                iconUrl: 'icon/bj_red.gif',
+                iconSize: [25, 30],
+                iconAnchor: [22, 94],
+                popupAnchor: [-3, -76],
+                shadowUrl: 'my-icon-shadow.png',
+                shadowSize: [68, 95],
+                shadowAnchor: [22, 94]
+            });
+
+
+
+
+            function clear_marker(map) {
+                if (markers_cluster) {
+                    map.removeLayer(markers_cluster);
+                }
+            }
+
+            function show_map_monitor_value(event, map) {
+                check = document.getElementById("check_link_map").checked
+                if (check) {
+                    center = event['center']
+                    zoom = event['zoom']
+                    map.setCenterXY(new LPoint(center[0], center[1]), zoom);
+                }
+
+
+                data = event['monitor_labels']
+                clear_marker(map);
+                markers_cluster = new L.MarkerClusterGroup().addTo(map);
+                var data_u = []; //处理非空数据，非空数据在图上不显示出来
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].X != "" && data[i].Y != "") {
+                        data_u.push(data[i]);
+                    }
+                }
+                //聚类显示控制器
+                for (var i = 0; i < data_u.length; i++) {
+                    var latlng = map.options.crs.projection.unproject(L.point(data_u[i].X, data_u[i].Y));
+                    // var latlng = L.point(data_u[i].X, data_u[i].Y);
+                    var id = data_u[i].ID;
+                    var label = data_u[i].Status
+                    var status_icon = Icon_normal
+                    if (label == "normal") {
+                        status_icon = Icon_normal
+                    } else if (label == "pred_over_limit") {
+                        status_icon = Icon_pred
+                    } else if (label == "over_limit") {
+                        status_icon = Icon_over
+                    }
+                    var markers = L.marker(L.latLng(latlng), { icon: status_icon });
+                    markers.bindPopup(data_u[i].text + "</br>");
+                    markers._id = data_u[i].ID;
+                    markers_cluster.addLayer(markers);
+
+
+                }
+
+                if (document.getElementById("check_polygon").checked) {
+                    if (polygon) {
+                        map.removeLayer(polygon);
+                    }
+                    polygon = new LPolygon(event['area']).addTo(map);
+                    polygon.setFillTwinkle(500, "yellow", "red");
+                } else {
+                    if (polygon) {
+                        map.removeLayer(polygon);
+                    }
+                }
+
+            }
+        </script>
+
+
+        <script>
+            var center_x = 106213.5183083
+            var center_y = 69317.10151376
+            var zoom = 6
+            //实例化地图
+            var map = new LOneMap('map', {
+                boxzoom: true,
+                zoomControl: true //默认显示控制器按钮
+            });
+            map.setCenterXY(new LPoint(center_x, center_y), zoom);
+
+
+            map.on('mousemove', function (e) {
+                if (!map.statusBar) {
+                    map.statusBar = new L.Control.StatusBar().addTo(map);
+                }
+                var pt = map.options.crs.project(e.latlng);
+                map.statusBar.updateXY(e.latlng.lng, e.latlng.lat, pt.x, pt.y, map.getZoom());//显示参数包括经纬度，大地坐标，缩放级别	
+            });
+            show_specific_layer(map)
+
+
+        </script>
+
+
+
+
+
+        <script>  
+            function generate_gas_event(gas_event) {
+                show_gas_event(gas_event)
+                gas_event = eval("(" + gas_event + ")")
+                show_map_monitor_value(gas_event, map)
+            }
+
+            function generate_gas_event_timeinter() {
+
+                $.get('/get_gas_analysis_event', generate_gas_event)
+                $.get('/get_gas_monitor_data', draw_gas_line_chart)
+                $.get('/get_gas_suggestion', get_gas_suggestion)
+            }
+
+            setInterval("generate_gas_event_timeinter()", "3000");
+        </script>
+
+</body>
+
+</html>

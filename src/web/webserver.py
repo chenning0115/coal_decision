@@ -17,7 +17,7 @@ import aggregate_analysis
 from coal_case.caseobj import find_one_obj
 from coal_case.search import Search
 from suggestion_function import suggest_electronic
-from xlog.xlog import xlogger
+from xlog.xlog import xlogger,LogType
 
 searcher = Search()
 
@@ -48,6 +48,7 @@ class GetGasMonitorDataHandler(tornado.web.RequestHandler):
             self.write(ss)
         else:
             self.write({})
+    
     
 class GetGasAnalysisEventHandler(tornado.web.RequestHandler):
     def get(self):
@@ -92,7 +93,7 @@ class ElectronicHandler(tornado.web.RequestHandler):
 class ElecSureHandler(tornado.web.RequestHandler):
     def get(self):
         update, cur_index, cur_time = get_cur_time()
-        xlogger.append_log(cur_time, "提交断电请求","已经向电力控制系统提交断电请求...")
+        xlogger.append_log(cur_time, "提交断电请求","已经向电力控制系统提交断电请求...",log_type=LogType.LOGTYPE_ACTION)
         time.sleep(2)
         res = {
             "status":"ok",
@@ -100,7 +101,7 @@ class ElecSureHandler(tornado.web.RequestHandler):
         }
         # 记录Log
         update, cur_index, cur_time = get_cur_time()
-        xlogger.append_log(cur_time, "确认断电成功","获取电力控制系统断电成功信息...")
+        xlogger.append_log(cur_time, "确认断电成功","获取电力控制系统断电成功信息...",log_type=LogType.LOGTYPE_ACTION)
         self.write(json.dumps(res))
 
 class EscapeHandler(tornado.web.RequestHandler):

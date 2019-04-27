@@ -73,7 +73,8 @@ class XLogger(object):
                 "date":item.get_date(),
                 "time":item.get_time(),
                 "title":item.get_title(),
-                "content":item.get_content()
+                "content":item.get_content(),
+                "type":item.log_type,
             }
             res.append(temp)
         return json.dumps(res)
